@@ -32,9 +32,19 @@
         0 20px 60px rgba(0,0,0,0.6);
       overflow: hidden;
       position: relative;
+      transition: box-shadow 0.6s ease;
     }
 
-    /* Corner ornaments */
+    .card.live {
+      animation: borderPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes borderPulse {
+      0%   { box-shadow: 0 0 0 1px #1e2540, 0 0 30px rgba(200,60,60,0.2),  0 20px 60px rgba(0,0,0,0.6); border-color: #a07830; }
+      50%  { box-shadow: 0 0 0 2px #1e2540, 0 0 50px rgba(220,60,60,0.55), 0 20px 60px rgba(0,0,0,0.6); border-color: #e05030; }
+      100% { box-shadow: 0 0 0 1px #1e2540, 0 0 30px rgba(200,60,60,0.2),  0 20px 60px rgba(0,0,0,0.6); border-color: #a07830; }
+    }
+
     .card::before, .card::after {
       content: '';
       position: absolute;
@@ -56,20 +66,70 @@
     .corner-tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; }
     .corner-bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
 
-    /* Header band */
     .header {
       background: linear-gradient(90deg, transparent, rgba(160,120,48,0.12), transparent);
       border-bottom: 1px solid #a07830;
       padding: 24px 24px 16px;
       text-align: center;
+      position: relative;
     }
 
-    .crystal-icon {
-      display: block;
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 12px;
+    /* Live pulse ring around soul stone */
+    .icon-wrap {
+      display: inline-block;
+      position: relative;
+      margin-bottom: 12px;
     }
+    .live-ring {
+      display: none;
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid #e05030;
+      animation: ringPulse 2s ease-in-out infinite;
+    }
+    .live-ring2 {
+      display: none;
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 1px solid rgba(220,80,40,0.4);
+      animation: ringPulse 2s ease-in-out infinite 0.4s;
+    }
+    .card.live .live-ring,
+    .card.live .live-ring2 { display: block; }
+
+    @keyframes ringPulse {
+      0%   { opacity: 0.8; transform: scale(1); }
+      50%  { opacity: 0.3; transform: scale(1.1); }
+      100% { opacity: 0.8; transform: scale(1); }
+    }
+
+    .crystal-icon { display: block; width: 48px; height: 48px; }
+
+    /* Live indicator dot */
+    .live-dot {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 6px;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: #e07060;
+      text-transform: uppercase;
+    }
+    .live-dot-circle {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #e05030;
+      animation: dotBlink 1.2s ease-in-out infinite;
+    }
+    @keyframes dotBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+    .card.live .live-dot { display: flex; }
 
     .title {
       font-family: 'Cinzel Decorative', serif;
@@ -79,7 +139,6 @@
       text-transform: uppercase;
       margin-bottom: 4px;
     }
-
     .question {
       font-family: 'Cinzel Decorative', serif;
       font-size: 20px;
@@ -88,13 +147,11 @@
       letter-spacing: 1px;
     }
 
-    /* Status section */
     .status-section {
       padding: 20px 24px 16px;
       text-align: center;
       border-bottom: 1px solid rgba(160,120,48,0.3);
     }
-
     .status-badge {
       display: inline-block;
       padding: 8px 20px;
@@ -115,13 +172,11 @@
       color: #60c080;
     }
 
-    /* Countdown */
     .countdown-section {
       padding: 16px 24px;
       text-align: center;
       border-bottom: 1px solid rgba(160,120,48,0.3);
     }
-
     .countdown-label {
       font-size: 9px;
       letter-spacing: 3px;
@@ -129,19 +184,12 @@
       text-transform: uppercase;
       margin-bottom: 10px;
     }
-
     .countdown-display {
       display: flex;
       justify-content: center;
       gap: 8px;
     }
-
-    .cd-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
+    .cd-block { display: flex; flex-direction: column; align-items: center; }
     .cd-num {
       background: rgba(160,120,48,0.1);
       border: 1px solid rgba(160,120,48,0.4);
@@ -153,8 +201,12 @@
       line-height: 1;
       padding: 8px 4px 6px;
       font-variant-numeric: tabular-nums;
+      transition: border-color 0.4s, color 0.4s;
     }
-
+    .card.live .cd-num {
+      border-color: rgba(200,80,60,0.5);
+      color: #f09080;
+    }
     .cd-sep {
       font-size: 24px;
       color: rgba(160,120,48,0.5);
@@ -162,7 +214,6 @@
       padding-top: 8px;
       line-height: 1;
     }
-
     .cd-unit {
       font-size: 8px;
       letter-spacing: 1.5px;
@@ -170,7 +221,6 @@
       margin-top: 5px;
       text-transform: uppercase;
     }
-
     .next-raid-label {
       font-size: 10px;
       letter-spacing: 2px;
@@ -178,7 +228,6 @@
       margin-top: 10px;
     }
 
-    /* Schedule toggle */
     .schedule-toggle {
       width: 100%;
       background: none;
@@ -201,12 +250,7 @@
     .toggle-arrow { font-size: 10px; transition: transform 0.25s; }
     .toggle-arrow.open { transform: rotate(180deg); }
 
-    /* Week schedule */
-    .week {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.35s ease;
-    }
+    .week { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
     .week.open { max-height: 400px; }
 
     .day-row {
@@ -218,22 +262,16 @@
       font-size: 11px;
       letter-spacing: 1px;
     }
+    .day-row.today-row { background: rgba(160,120,48,0.07); }
     .day-name { color: #8899bb; font-weight: 600; }
     .day-time { font-size: 10px; letter-spacing: 1px; }
     .raid-time { color: #e07060; }
     .no-raid-time { color: #4a6a4a; }
-    .day-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      margin-right: 8px;
-      flex-shrink: 0;
-    }
+    .day-dot { width: 7px; height: 7px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
     .dot-raid { background: #c84040; }
     .dot-noraid { background: #2a7040; }
-
     .day-left { display: flex; align-items: center; }
 
-    /* Footer */
     .footer {
       padding: 12px 24px;
       text-align: center;
@@ -245,36 +283,34 @@
   </style>
 </head>
 <body>
-<div class="card">
+<div class="card" id="card">
   <div class="corner-tr"></div>
   <div class="corner-bl"></div>
 
   <div class="header">
-    <!-- Gunbreaker soul stone emblem -->
-    <svg class="crystal-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Stone body: rounded square, slightly rotated -->
-      <g transform="rotate(-8, 24, 24)">
-        <rect x="6" y="6" width="36" height="36" rx="6" ry="6" fill="#b8a030" />
-        <rect x="6" y="6" width="36" height="36" rx="6" ry="6" fill="url(#stoneShade)" />
-        <!-- Beveled edge highlight -->
-        <rect x="8" y="8" width="32" height="32" rx="5" ry="5" fill="none" stroke="#e8d060" stroke-width="1.2" opacity="0.5"/>
-        <!-- Inner face (slightly inset) -->
-        <rect x="10" y="10" width="28" height="28" rx="4" ry="4" fill="#9a8820" opacity="0.6"/>
-        <!-- Glowing circle -->
-        <circle cx="24" cy="24" r="9" fill="none" stroke="#f0e040" stroke-width="2" opacity="0.9"/>
-        <!-- Diagonal slash through circle (the ø symbol) -->
-        <line x1="17" y1="31" x2="31" y2="17" stroke="#f0e040" stroke-width="2.2" stroke-linecap="round" opacity="0.95"/>
-        <!-- Center glow dot -->
-        <circle cx="24" cy="24" r="2" fill="#fff8a0" opacity="0.7"/>
-      </g>
-      <defs>
-        <radialGradient id="stoneShade" cx="35%" cy="30%" r="70%">
-          <stop offset="0%" stop-color="#e8d060" stop-opacity="0.3"/>
-          <stop offset="60%" stop-color="#b8a030" stop-opacity="0"/>
-          <stop offset="100%" stop-color="#504010" stop-opacity="0.5"/>
-        </radialGradient>
-      </defs>
-    </svg>
+    <div class="live-dot"><div class="live-dot-circle"></div>Raid Live</div>
+    <div class="icon-wrap">
+      <div class="live-ring"></div>
+      <div class="live-ring2"></div>
+      <svg class="crystal-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(-8, 24, 24)">
+          <rect x="6" y="6" width="36" height="36" rx="6" ry="6" fill="#b8a030"/>
+          <rect x="6" y="6" width="36" height="36" rx="6" ry="6" fill="url(#stoneShade)"/>
+          <rect x="8" y="8" width="32" height="32" rx="5" ry="5" fill="none" stroke="#e8d060" stroke-width="1.2" opacity="0.5"/>
+          <rect x="10" y="10" width="28" height="28" rx="4" ry="4" fill="#9a8820" opacity="0.6"/>
+          <circle cx="24" cy="24" r="9" fill="none" stroke="#f0e040" stroke-width="2" opacity="0.9"/>
+          <line x1="17" y1="31" x2="31" y2="17" stroke="#f0e040" stroke-width="2.2" stroke-linecap="round" opacity="0.95"/>
+          <circle cx="24" cy="24" r="2" fill="#fff8a0" opacity="0.7"/>
+        </g>
+        <defs>
+          <radialGradient id="stoneShade" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#e8d060" stop-opacity="0.3"/>
+            <stop offset="60%" stop-color="#b8a030" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#504010" stop-opacity="0.5"/>
+          </radialGradient>
+        </defs>
+      </svg>
+    </div>
     <div class="title">Eorzea Raid Tracker</div>
     <div class="question">Does He Raid?</div>
   </div>
@@ -284,29 +320,18 @@
   </div>
 
   <div class="countdown-section">
-    <div class="countdown-label">Next Raid Begins In</div>
+    <div class="countdown-label" id="cd-label">Next Raid Begins In</div>
     <div class="countdown-display">
-      <div class="cd-block">
-        <div class="cd-num" id="cd-days">00</div>
-        <div class="cd-unit">Days</div>
-      </div>
+      <div class="cd-block"><div class="cd-num" id="cd-days">00</div><div class="cd-unit">Days</div></div>
       <div class="cd-sep">:</div>
-      <div class="cd-block">
-        <div class="cd-num" id="cd-hours">00</div>
-        <div class="cd-unit">Hours</div>
-      </div>
+      <div class="cd-block"><div class="cd-num" id="cd-hours">00</div><div class="cd-unit">Hours</div></div>
       <div class="cd-sep">:</div>
-      <div class="cd-block">
-        <div class="cd-num" id="cd-mins">00</div>
-        <div class="cd-unit">Mins</div>
-      </div>
+      <div class="cd-block"><div class="cd-num" id="cd-mins">00</div><div class="cd-unit">Mins</div></div>
       <div class="cd-sep">:</div>
-      <div class="cd-block">
-        <div class="cd-num" id="cd-secs">00</div>
-        <div class="cd-unit">Secs</div>
-      </div>
+      <div class="cd-block"><div class="cd-num" id="cd-secs">00</div><div class="cd-unit">Secs</div></div>
     </div>
     <div class="next-raid-label" id="next-label">—</div>
+    <div style="font-size:8px;letter-spacing:2px;color:rgba(100,110,160,0.5);text-transform:uppercase;margin-top:8px;">All times Eastern (EST)</div>
   </div>
 
   <button class="schedule-toggle" id="toggle-btn" onclick="toggleWeek()">
@@ -314,31 +339,31 @@
   </button>
 
   <div class="week" id="week">
-    <div class="day-row">
+    <div class="day-row" id="row-0">
       <div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Sunday</span></div>
       <span class="day-time raid-time">7:30 – 11:30 PM</span>
     </div>
-    <div class="day-row">
+    <div class="day-row" id="row-1">
       <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Monday</span></div>
       <span class="day-time no-raid-time">No Raid</span>
     </div>
-    <div class="day-row">
+    <div class="day-row" id="row-2">
       <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Tuesday</span></div>
       <span class="day-time no-raid-time">No Raid</span>
     </div>
-    <div class="day-row">
+    <div class="day-row" id="row-3">
       <div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Wednesday</span></div>
-      <span class="day-time raid-time">9:00 – 11:30 PM</span>
+      <span class="day-time raid-time">9:00 – 11:00 PM</span>
     </div>
-    <div class="day-row">
+    <div class="day-row" id="row-4">
       <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Thursday</span></div>
       <span class="day-time no-raid-time">No Raid</span>
     </div>
-    <div class="day-row">
+    <div class="day-row" id="row-5">
       <div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Friday</span></div>
-      <span class="day-time raid-time">9:00 – 11:30 PM</span>
+      <span class="day-time raid-time">9:00 – 11:00 PM</span>
     </div>
-    <div class="day-row" style="border-bottom:none;">
+    <div class="day-row" id="row-6" style="border-bottom:none;">
       <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Saturday</span></div>
       <span class="day-time no-raid-time">No Raid</span>
     </div>
@@ -348,120 +373,116 @@
 </div>
 
 <script>
-  // Raid days: 0=Sun, 3=Wed, 5=Fri
-  // Start hours (24h): Sun=19:30, Wed=21:00, Fri=21:00
   const raids = [
     { day: 0, startH: 19, startM: 30, endH: 23, endM: 30, label: 'Sunday' },
-    { day: 3, startH: 21, startM: 0,  endH: 23, endM: 30, label: 'Wednesday' },
-    { day: 5, startH: 21, startM: 0,  endH: 23, endM: 30, label: 'Friday' },
+    { day: 3, startH: 21, startM: 0,  endH: 23, endM: 0, label: 'Wednesday' },
+    { day: 5, startH: 21, startM: 0,  endH: 23, endM: 0, label: 'Friday' },
   ];
 
-  const badge = document.getElementById('status-badge');
+  const card   = document.getElementById('card');
+  const badge  = document.getElementById('status-badge');
+  const cdLabel = document.getElementById('cd-label');
   const nextLabel = document.getElementById('next-label');
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
-  function getNextRaidMs(now) {
-    const nowDay = now.getDay();
-    const nowMins = now.getHours() * 60 + now.getMinutes();
-
-    let best = null;
-    let bestRaid = null;
-
-    for (let offset = 0; offset <= 7; offset++) {
-      for (const r of raids) {
-        const targetDay = (r.day + 7) % 7;
-        let daysAhead = (targetDay - nowDay + 7) % 7;
-        if (daysAhead === 0) {
-          const raidStartMins = r.startH * 60 + r.startM;
-          if (nowMins >= raidStartMins) daysAhead = 7;
-        }
-        daysAhead += offset === 0 ? 0 : 0; // already handled
-
-        const target = new Date(now);
-        target.setDate(now.getDate() + daysAhead);
-        target.setHours(r.startH, r.startM, 0, 0);
-
-        const diff = target - now;
-        if (diff > 0 && (best === null || diff < best)) {
-          best = diff;
-          bestRaid = { ...r, target };
-        }
-      }
-      break; // single pass is enough with the daysAhead logic
-    }
-
-    // Recalculate cleanly
-    let closestDiff = Infinity;
-    let closestRaid = null;
-    for (const r of raids) {
-      for (let week = 0; week <= 1; week++) {
-        const t = new Date(now);
-        let d = (r.day - now.getDay() + 7) % 7 + week * 7;
-        if (d === 0 && (now.getHours() * 60 + now.getMinutes()) >= r.startH * 60 + r.startM) d = 7;
-        t.setDate(now.getDate() + d);
-        t.setHours(r.startH, r.startM, 0, 0);
-        const diff = t - now;
-        if (diff > 0 && diff < closestDiff) {
-          closestDiff = diff;
-          closestRaid = { ...r, target: t };
-        }
-      }
-    }
-    return closestRaid;
+  function getEST(now) {
+    return new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
   }
 
-  function isRaidingNow(now) {
-    const day = now.getDay();
-    const mins = now.getHours() * 60 + now.getMinutes();
+  function getCurrentRaid(now) {
+    const est = getEST(now);
+    const day = est.getDay(), mins = est.getHours() * 60 + est.getMinutes();
     for (const r of raids) {
-      if (r.day === day) {
-        if (mins >= r.startH * 60 + r.startM && mins < r.endH * 60 + r.endM) return true;
+      if (r.day === day && mins >= r.startH * 60 + r.startM && mins < r.endH * 60 + r.endM) return r;
+    }
+    return null;
+  }
+
+  function getNextRaid(now) {
+    const est = getEST(now);
+    let best = null, bestDiff = Infinity;
+    for (const r of raids) {
+      for (let w = 0; w <= 1; w++) {
+        const t = new Date(est);
+        let d = (r.day - est.getDay() + 7) % 7 + w * 7;
+        if (d === 0 && est.getHours() * 60 + est.getMinutes() >= r.startH * 60 + r.startM) d = 7;
+        t.setDate(est.getDate() + d);
+        t.setHours(r.startH, r.startM, 0, 0);
+        const diff = t - est;
+        if (diff > 0 && diff < bestDiff) { bestDiff = diff; best = { ...r, target: t }; }
       }
     }
-    return false;
+    return best;
+  }
+
+  function highlightToday() {
+    const today = getEST(new Date()).getDay();
+    for (let i = 0; i <= 6; i++) {
+      document.getElementById('row-' + i).classList.toggle('today-row', i === today);
+    }
   }
 
   function tick() {
     const now = new Date();
-    const raiding = isRaidingNow(now);
+    const est = getEST(now);
+    const active = getCurrentRaid(now);
 
-    if (raiding) {
+    // Live state
+    card.classList.toggle('live', !!active);
+
+    if (active) {
       badge.textContent = 'Yes — Richard Raids!';
       badge.className = 'status-badge raid';
-    } else {
-      badge.textContent = 'No Raid Today';
-      badge.className = 'status-badge no-raid';
-    }
 
-    const next = getNextRaidMs(now);
-    if (next) {
-      const diff = next.target - now;
-      const totalSecs = Math.floor(diff / 1000);
-      const d = Math.floor(totalSecs / 86400);
-      const h = Math.floor((totalSecs % 86400) / 3600);
+      // Countdown to end
+      const end = new Date(est);
+      end.setHours(active.endH, active.endM, 0, 0);
+      const diff = end - est;
+      const totalSecs = Math.max(0, Math.floor(diff / 1000));
+      const h = Math.floor(totalSecs / 3600);
       const m = Math.floor((totalSecs % 3600) / 60);
       const s = totalSecs % 60;
 
-      document.getElementById('cd-days').textContent = pad(d);
+      cdLabel.textContent = 'Raid Ends In';
+      document.getElementById('cd-days').textContent = '00';
       document.getElementById('cd-hours').textContent = pad(h);
       document.getElementById('cd-mins').textContent = pad(m);
       document.getElementById('cd-secs').textContent = pad(s);
+      nextLabel.textContent = active.label + ' raid ends at ' +
+        (active.endH % 12 || 12) + ':' + pad(active.endM) + ' PM';
+    } else {
+      badge.textContent = 'No Raid Today';
+      badge.className = 'status-badge no-raid';
 
-      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const dayName = days[next.target.getDay()];
-      const startStr = `${next.startH % 12 || 12}:${pad(next.startM)} ${next.startH >= 12 ? 'PM' : 'AM'}`;
-      nextLabel.textContent = `${dayName} at ${startStr}`;
+      const next = getNextRaid(now);
+      if (next) {
+        const diff = next.target - now;
+        const totalSecs = Math.floor(diff / 1000);
+        const d = Math.floor(totalSecs / 86400);
+        const h = Math.floor((totalSecs % 86400) / 3600);
+        const m = Math.floor((totalSecs % 3600) / 60);
+        const s = totalSecs % 60;
+
+        cdLabel.textContent = 'Next Raid Begins In';
+        document.getElementById('cd-days').textContent = pad(d);
+        document.getElementById('cd-hours').textContent = pad(h);
+        document.getElementById('cd-mins').textContent = pad(m);
+        document.getElementById('cd-secs').textContent = pad(s);
+
+        const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const startStr = (next.startH % 12 || 12) + ':' + pad(next.startM) + ' ' + (next.startH >= 12 ? 'PM' : 'AM');
+        nextLabel.textContent = days[next.target.getDay()] + ' at ' + startStr;
+      }
     }
   }
 
   function toggleWeek() {
-    const w = document.getElementById('week');
-    const a = document.getElementById('arrow');
-    w.classList.toggle('open');
-    a.classList.toggle('open');
+    document.getElementById('week').classList.toggle('open');
+    document.getElementById('arrow').classList.toggle('open');
   }
 
+  highlightToday();
   tick();
   setInterval(tick, 1000);
 </script>
