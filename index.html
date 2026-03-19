@@ -4,98 +4,466 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Richard Raids Calendar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Cinzel', serif;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background-color: #f4f4f4;
+      background-color: #0a0d14;
+      background-image:
+        radial-gradient(ellipse at 20% 20%, rgba(100,60,180,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(30,80,160,0.18) 0%, transparent 60%);
+      padding: 30px 16px;
     }
 
-    .calendar {
-      padding: 30px;
-      border-radius: 12px;
-      background-color: white;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    .card {
+      width: 360px;
+      background: linear-gradient(160deg, #12172a 0%, #0e1220 100%);
+      border: 1px solid #a07830;
+      border-radius: 4px;
+      box-shadow:
+        0 0 0 1px #1e2540,
+        0 0 30px rgba(160,120,48,0.15),
+        0 20px 60px rgba(0,0,0,0.6);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Corner ornaments */
+    .card::before, .card::after {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      border-color: #c9942a;
+      border-style: solid;
+      z-index: 2;
+    }
+    .card::before { top: 6px; left: 6px; border-width: 2px 0 0 2px; }
+    .card::after  { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
+
+    .corner-tr, .corner-bl {
+      position: absolute;
+      width: 18px; height: 18px;
+      border-color: #c9942a;
+      border-style: solid;
+      z-index: 2;
+    }
+    .corner-tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; }
+    .corner-bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
+
+    /* Header band */
+    .header {
+      background: linear-gradient(90deg, transparent, rgba(160,120,48,0.12), transparent);
+      border-bottom: 1px solid #a07830;
+      padding: 24px 24px 16px;
       text-align: center;
-      transition: background-color 0.3s ease;
-      cursor: pointer;
-      width: 300px;
     }
 
-    .highlight {
-      background-color: #ff4d4d;
-      color: white;
+    .crystal-icon {
+      display: block;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
     }
 
-    h1 {
+    .title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: #8899cc;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .question {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #e8d8a0;
+      letter-spacing: 1px;
+    }
+
+    /* Status section */
+    .status-section {
+      padding: 20px 24px 16px;
+      text-align: center;
+      border-bottom: 1px solid rgba(160,120,48,0.3);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 2px;
+      font-size: 13px;
+      letter-spacing: 2px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-badge.raid {
+      background: rgba(180,50,50,0.2);
+      border: 1px solid #c84040;
+      color: #f08080;
+    }
+    .status-badge.no-raid {
+      background: rgba(40,130,80,0.15);
+      border: 1px solid #2a8040;
+      color: #60c080;
+    }
+
+    /* Countdown */
+    .countdown-section {
+      padding: 16px 24px;
+      text-align: center;
+      border-bottom: 1px solid rgba(160,120,48,0.3);
+    }
+
+    .countdown-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: #5566aa;
+      text-transform: uppercase;
       margin-bottom: 10px;
     }
 
-    p {
-      font-size: 18px;
+    .countdown-display {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
     }
 
+    .cd-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cd-num {
+      background: rgba(160,120,48,0.1);
+      border: 1px solid rgba(160,120,48,0.4);
+      border-radius: 3px;
+      width: 52px;
+      font-size: 26px;
+      font-weight: 700;
+      color: #e8d070;
+      line-height: 1;
+      padding: 8px 4px 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cd-sep {
+      font-size: 24px;
+      color: rgba(160,120,48,0.5);
+      align-self: flex-start;
+      padding-top: 8px;
+      line-height: 1;
+    }
+
+    .cd-unit {
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      color: #5566aa;
+      margin-top: 5px;
+      text-transform: uppercase;
+    }
+
+    .next-raid-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: #8899cc;
+      margin-top: 10px;
+    }
+
+    /* Schedule toggle */
+    .schedule-toggle {
+      width: 100%;
+      background: none;
+      border: none;
+      border-bottom: 1px solid rgba(160,120,48,0.3);
+      padding: 12px 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: #8090c0;
+      text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+    }
+    .schedule-toggle:hover { background: rgba(160,120,48,0.07); color: #c9a050; }
+    .toggle-arrow { font-size: 10px; transition: transform 0.25s; }
+    .toggle-arrow.open { transform: rotate(180deg); }
+
+    /* Week schedule */
     .week {
-      margin-top: 15px;
-      display: none;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
     }
+    .week.open { max-height: 400px; }
 
-    .day {
-      padding: 6px;
-      border-radius: 6px;
-      margin: 4px 0;
+    .day-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 11px;
+      letter-spacing: 1px;
     }
-
-    .raid-day {
-      background-color: #ff4d4d;
-      color: white;
-      font-weight: bold;
+    .day-name { color: #8899bb; font-weight: 600; }
+    .day-time { font-size: 10px; letter-spacing: 1px; }
+    .raid-time { color: #e07060; }
+    .no-raid-time { color: #4a6a4a; }
+    .day-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      margin-right: 8px;
+      flex-shrink: 0;
     }
+    .dot-raid { background: #c84040; }
+    .dot-noraid { background: #2a7040; }
 
-    .non-raid-day {
-      background-color: #4CAF50;
-      color: white;
-      font-weight: bold;
+    .day-left { display: flex; align-items: center; }
+
+    /* Footer */
+    .footer {
+      padding: 12px 24px;
+      text-align: center;
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: rgba(100,110,160,0.4);
+      text-transform: uppercase;
     }
   </style>
 </head>
 <body>
-  <div id="calendar" class="calendar">
-    <h1>Does he raid?</h1>
-    <p id="status">Checking raid status...</p>
+<div class="card">
+  <div class="corner-tr"></div>
+  <div class="corner-bl"></div>
 
-    <div id="week" class="week">
-      <div class="day raid-day">Sunday (7:30–11:30)</div>
-      <div class="day non-raid-day">Monday (No Raid)</div>
-      <div class="day non-raid-day">Tuesday (No Raid)</div>
-      <div class="day raid-day">Wednesday (9:00–11:30)</div>
-      <div class="day non-raid-day">Thursday (No Raid)</div>
-      <div class="day raid-day">Friday (9:00–11:30)</div>
-      <div class="day non-raid-day">Saturday (No Raid)</div>
+  <div class="header">
+    <!-- Gunbreaker soul stone emblem -->
+    <svg class="crystal-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Stone body: rounded square, slightly rotated -->
+      <g transform="rotate(-8, 24, 24)">
+        <rect x="6" y="6" width="36" height="36" rx="6" ry="6" fill="#b8a030" />
+        <rect x="6" y="6" width="36" height="36" rx="6" ry="6" fill="url(#stoneShade)" />
+        <!-- Beveled edge highlight -->
+        <rect x="8" y="8" width="32" height="32" rx="5" ry="5" fill="none" stroke="#e8d060" stroke-width="1.2" opacity="0.5"/>
+        <!-- Inner face (slightly inset) -->
+        <rect x="10" y="10" width="28" height="28" rx="4" ry="4" fill="#9a8820" opacity="0.6"/>
+        <!-- Glowing circle -->
+        <circle cx="24" cy="24" r="9" fill="none" stroke="#f0e040" stroke-width="2" opacity="0.9"/>
+        <!-- Diagonal slash through circle (the ø symbol) -->
+        <line x1="17" y1="31" x2="31" y2="17" stroke="#f0e040" stroke-width="2.2" stroke-linecap="round" opacity="0.95"/>
+        <!-- Center glow dot -->
+        <circle cx="24" cy="24" r="2" fill="#fff8a0" opacity="0.7"/>
+      </g>
+      <defs>
+        <radialGradient id="stoneShade" cx="35%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="#e8d060" stop-opacity="0.3"/>
+          <stop offset="60%" stop-color="#b8a030" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#504010" stop-opacity="0.5"/>
+        </radialGradient>
+      </defs>
+    </svg>
+    <div class="title">Eorzea Raid Tracker</div>
+    <div class="question">Does He Raid?</div>
+  </div>
+
+  <div class="status-section">
+    <span id="status-badge" class="status-badge">—</span>
+  </div>
+
+  <div class="countdown-section">
+    <div class="countdown-label">Next Raid Begins In</div>
+    <div class="countdown-display">
+      <div class="cd-block">
+        <div class="cd-num" id="cd-days">00</div>
+        <div class="cd-unit">Days</div>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block">
+        <div class="cd-num" id="cd-hours">00</div>
+        <div class="cd-unit">Hours</div>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block">
+        <div class="cd-num" id="cd-mins">00</div>
+        <div class="cd-unit">Mins</div>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block">
+        <div class="cd-num" id="cd-secs">00</div>
+        <div class="cd-unit">Secs</div>
+      </div>
+    </div>
+    <div class="next-raid-label" id="next-label">—</div>
+  </div>
+
+  <button class="schedule-toggle" id="toggle-btn" onclick="toggleWeek()">
+    View Full Schedule <span class="toggle-arrow" id="arrow">▾</span>
+  </button>
+
+  <div class="week" id="week">
+    <div class="day-row">
+      <div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Sunday</span></div>
+      <span class="day-time raid-time">7:30 – 11:30 PM</span>
+    </div>
+    <div class="day-row">
+      <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Monday</span></div>
+      <span class="day-time no-raid-time">No Raid</span>
+    </div>
+    <div class="day-row">
+      <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Tuesday</span></div>
+      <span class="day-time no-raid-time">No Raid</span>
+    </div>
+    <div class="day-row">
+      <div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Wednesday</span></div>
+      <span class="day-time raid-time">9:00 – 11:30 PM</span>
+    </div>
+    <div class="day-row">
+      <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Thursday</span></div>
+      <span class="day-time no-raid-time">No Raid</span>
+    </div>
+    <div class="day-row">
+      <div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Friday</span></div>
+      <span class="day-time raid-time">9:00 – 11:30 PM</span>
+    </div>
+    <div class="day-row" style="border-bottom:none;">
+      <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Saturday</span></div>
+      <span class="day-time no-raid-time">No Raid</span>
     </div>
   </div>
 
-  <script>
-    const today = new Date();
-    const day = today.getDay();
+  <div class="footer">Gunbreaking Out</div>
+</div>
 
-    const calendar = document.getElementById("calendar");
-    const status = document.getElementById("status");
-    const week = document.getElementById("week");
+<script>
+  // Raid days: 0=Sun, 3=Wed, 5=Fri
+  // Start hours (24h): Sun=19:30, Wed=21:00, Fri=21:00
+  const raids = [
+    { day: 0, startH: 19, startM: 30, endH: 23, endM: 30, label: 'Sunday' },
+    { day: 3, startH: 21, startM: 0,  endH: 23, endM: 30, label: 'Wednesday' },
+    { day: 5, startH: 21, startM: 0,  endH: 23, endM: 30, label: 'Friday' },
+  ];
 
-    if (day === 0 || day === 3 || day === 5) {
-      calendar.classList.add("highlight");
-      status.textContent = "Yes, Richard raids.";
-    } else {
-      status.textContent = "No, Richard does not raid today.";
+  const badge = document.getElementById('status-badge');
+  const nextLabel = document.getElementById('next-label');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function getNextRaidMs(now) {
+    const nowDay = now.getDay();
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+
+    let best = null;
+    let bestRaid = null;
+
+    for (let offset = 0; offset <= 7; offset++) {
+      for (const r of raids) {
+        const targetDay = (r.day + 7) % 7;
+        let daysAhead = (targetDay - nowDay + 7) % 7;
+        if (daysAhead === 0) {
+          const raidStartMins = r.startH * 60 + r.startM;
+          if (nowMins >= raidStartMins) daysAhead = 7;
+        }
+        daysAhead += offset === 0 ? 0 : 0; // already handled
+
+        const target = new Date(now);
+        target.setDate(now.getDate() + daysAhead);
+        target.setHours(r.startH, r.startM, 0, 0);
+
+        const diff = target - now;
+        if (diff > 0 && (best === null || diff < best)) {
+          best = diff;
+          bestRaid = { ...r, target };
+        }
+      }
+      break; // single pass is enough with the daysAhead logic
     }
 
-    calendar.addEventListener("click", () => {
-      week.style.display = week.style.display === "block" ? "none" : "block";
-    });
-  </script>
+    // Recalculate cleanly
+    let closestDiff = Infinity;
+    let closestRaid = null;
+    for (const r of raids) {
+      for (let week = 0; week <= 1; week++) {
+        const t = new Date(now);
+        let d = (r.day - now.getDay() + 7) % 7 + week * 7;
+        if (d === 0 && (now.getHours() * 60 + now.getMinutes()) >= r.startH * 60 + r.startM) d = 7;
+        t.setDate(now.getDate() + d);
+        t.setHours(r.startH, r.startM, 0, 0);
+        const diff = t - now;
+        if (diff > 0 && diff < closestDiff) {
+          closestDiff = diff;
+          closestRaid = { ...r, target: t };
+        }
+      }
+    }
+    return closestRaid;
+  }
+
+  function isRaidingNow(now) {
+    const day = now.getDay();
+    const mins = now.getHours() * 60 + now.getMinutes();
+    for (const r of raids) {
+      if (r.day === day) {
+        if (mins >= r.startH * 60 + r.startM && mins < r.endH * 60 + r.endM) return true;
+      }
+    }
+    return false;
+  }
+
+  function tick() {
+    const now = new Date();
+    const raiding = isRaidingNow(now);
+
+    if (raiding) {
+      badge.textContent = 'Yes — Richard Raids!';
+      badge.className = 'status-badge raid';
+    } else {
+      badge.textContent = 'No Raid Today';
+      badge.className = 'status-badge no-raid';
+    }
+
+    const next = getNextRaidMs(now);
+    if (next) {
+      const diff = next.target - now;
+      const totalSecs = Math.floor(diff / 1000);
+      const d = Math.floor(totalSecs / 86400);
+      const h = Math.floor((totalSecs % 86400) / 3600);
+      const m = Math.floor((totalSecs % 3600) / 60);
+      const s = totalSecs % 60;
+
+      document.getElementById('cd-days').textContent = pad(d);
+      document.getElementById('cd-hours').textContent = pad(h);
+      document.getElementById('cd-mins').textContent = pad(m);
+      document.getElementById('cd-secs').textContent = pad(s);
+
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const dayName = days[next.target.getDay()];
+      const startStr = `${next.startH % 12 || 12}:${pad(next.startM)} ${next.startH >= 12 ? 'PM' : 'AM'}`;
+      nextLabel.textContent = `${dayName} at ${startStr}`;
+    }
+  }
+
+  function toggleWeek() {
+    const w = document.getElementById('week');
+    const a = document.getElementById('arrow');
+    w.classList.toggle('open');
+    a.classList.toggle('open');
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
 </body>
 </html>
