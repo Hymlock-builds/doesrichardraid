@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Richard Raids Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    .calendar {
+      padding: 30px;
+      border-radius: 12px;
+      background-color: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+      width: 300px;
+    }
+
+    .highlight {
+      background-color: #ff4d4d;
+      color: white;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    .week {
+      margin-top: 15px;
+      display: none;
+    }
+
+    .day {
+      padding: 6px;
+      border-radius: 6px;
+      margin: 4px 0;
+    }
+
+    .raid-day {
+      background-color: #ff4d4d;
+      color: white;
+      font-weight: bold;
+    }
+
+    .non-raid-day {
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="calendar" class="calendar">
+    <h1>Does he raid?</h1>
+    <p id="status">Checking raid status...</p>
+
+    <div id="week" class="week">
+      <div class="day raid-day">Sunday (7:30–11:30)</div>
+      <div class="day non-raid-day">Monday (No Raid)</div>
+      <div class="day non-raid-day">Tuesday (No Raid)</div>
+      <div class="day raid-day">Wednesday (9:00–11:30)</div>
+      <div class="day non-raid-day">Thursday (No Raid)</div>
+      <div class="day raid-day">Friday (9:00–11:30)</div>
+      <div class="day non-raid-day">Saturday (No Raid)</div>
+    </div>
+  </div>
+
+  <script>
+    const today = new Date();
+    const day = today.getDay();
+
+    const calendar = document.getElementById("calendar");
+    const status = document.getElementById("status");
+    const week = document.getElementById("week");
+
+    if (day === 0 || day === 3 || day === 5) {
+      calendar.classList.add("highlight");
+      status.textContent = "Yes, Richard raids.";
+    } else {
+      status.textContent = "No, Richard does not raid today.";
+    }
+
+    calendar.addEventListener("click", () => {
+      week.style.display = week.style.display === "block" ? "none" : "block";
+    });
+  </script>
+</body>
+</html>
