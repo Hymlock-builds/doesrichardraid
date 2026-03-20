@@ -21,24 +21,42 @@
       padding: 30px 16px;
     }
 
+    .uwu-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .uwu {
+      position: absolute;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      color: rgba(160, 120, 48, 1);
+      letter-spacing: 3px;
+      user-select: none;
+      animation: uwuFade 6s ease-in-out infinite;
+      opacity: 0;
+    }
+    @keyframes uwuFade {
+      0%   { opacity: 0; }
+      20%  { opacity: 0.07; }
+      80%  { opacity: 0.07; }
+      100% { opacity: 0; }
+    }
+
     .card {
       width: 360px;
       background: linear-gradient(160deg, #12172a 0%, #0e1220 100%);
       border: 1px solid #a07830;
       border-radius: 4px;
-      box-shadow:
-        0 0 0 1px #1e2540,
-        0 0 30px rgba(160,120,48,0.15),
-        0 20px 60px rgba(0,0,0,0.6);
+      box-shadow: 0 0 0 1px #1e2540, 0 0 30px rgba(160,120,48,0.15), 0 20px 60px rgba(0,0,0,0.6);
       overflow: hidden;
       position: relative;
+      z-index: 1;
       transition: box-shadow 0.6s ease;
     }
-
-    .card.live {
-      animation: borderPulse 2s ease-in-out infinite;
-    }
-
+    .card.live { animation: borderPulse 2s ease-in-out infinite; }
     @keyframes borderPulse {
       0%   { box-shadow: 0 0 0 1px #1e2540, 0 0 30px rgba(200,60,60,0.2),  0 20px 60px rgba(0,0,0,0.6); border-color: #a07830; }
       50%  { box-shadow: 0 0 0 2px #1e2540, 0 0 50px rgba(220,60,60,0.55), 0 20px 60px rgba(0,0,0,0.6); border-color: #e05030; }
@@ -55,14 +73,7 @@
     }
     .card::before { top: 6px; left: 6px; border-width: 2px 0 0 2px; }
     .card::after  { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
-
-    .corner-tr, .corner-bl {
-      position: absolute;
-      width: 18px; height: 18px;
-      border-color: #c9942a;
-      border-style: solid;
-      z-index: 2;
-    }
+    .corner-tr, .corner-bl { position: absolute; width: 18px; height: 18px; border-color: #c9942a; border-style: solid; z-index: 2; }
     .corner-tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; }
     .corner-bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
 
@@ -73,122 +84,35 @@
       text-align: center;
       position: relative;
     }
-
-    /* Live pulse ring around soul stone */
-    .icon-wrap {
-      display: inline-block;
-      position: relative;
-      margin-bottom: 12px;
-    }
-    .live-ring {
-      display: none;
-      position: absolute;
-      inset: -6px;
-      border-radius: 50%;
-      border: 2px solid #e05030;
-      animation: ringPulse 2s ease-in-out infinite;
-    }
-    .live-ring2 {
-      display: none;
-      position: absolute;
-      inset: -12px;
-      border-radius: 50%;
-      border: 1px solid rgba(220,80,40,0.4);
-      animation: ringPulse 2s ease-in-out infinite 0.4s;
-    }
-    .card.live .live-ring,
-    .card.live .live-ring2 { display: block; }
-
+    .icon-wrap { display: inline-block; position: relative; margin-bottom: 12px; }
+    .live-ring, .live-ring2 { display: none; position: absolute; border-radius: 50%; border: 2px solid #e05030; animation: ringPulse 2s ease-in-out infinite; }
+    .live-ring  { inset: -6px; }
+    .live-ring2 { inset: -12px; border-width: 1px; border-color: rgba(220,80,40,0.4); animation-delay: 0.4s; }
+    .card.live .live-ring, .card.live .live-ring2 { display: block; }
     @keyframes ringPulse {
       0%   { opacity: 0.8; transform: scale(1); }
       50%  { opacity: 0.3; transform: scale(1.1); }
       100% { opacity: 0.8; transform: scale(1); }
     }
-
     .crystal-icon { display: block; width: 48px; height: 48px; }
 
-    /* Live indicator dot */
-    .live-dot {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      margin-bottom: 6px;
-      font-size: 9px;
-      letter-spacing: 3px;
-      color: #e07060;
-      text-transform: uppercase;
-    }
-    .live-dot-circle {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #e05030;
-      animation: dotBlink 1.2s ease-in-out infinite;
-    }
-    @keyframes dotBlink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.2; }
-    }
+    .live-dot { display: none; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px; font-size: 9px; letter-spacing: 3px; color: #e07060; text-transform: uppercase; }
+    .live-dot-circle { width: 7px; height: 7px; border-radius: 50%; background: #e05030; animation: dotBlink 1.2s ease-in-out infinite; }
+    @keyframes dotBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
     .card.live .live-dot { display: flex; }
 
-    .title {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: 11px;
-      letter-spacing: 4px;
-      color: #8899cc;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-    .question {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: #e8d8a0;
-      letter-spacing: 1px;
-    }
+    .title { font-family: 'Cinzel Decorative', serif; font-size: 11px; letter-spacing: 4px; color: #8899cc; text-transform: uppercase; margin-bottom: 4px; }
+    .question { font-family: 'Cinzel Decorative', serif; font-size: 20px; font-weight: 700; color: #e8d8a0; letter-spacing: 1px; }
 
-    .status-section {
-      padding: 20px 24px 16px;
-      text-align: center;
-      border-bottom: 1px solid rgba(160,120,48,0.3);
-    }
-    .status-badge {
-      display: inline-block;
-      padding: 8px 20px;
-      border-radius: 2px;
-      font-size: 13px;
-      letter-spacing: 2px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    .status-badge.raid {
-      background: rgba(180,50,50,0.2);
-      border: 1px solid #c84040;
-      color: #f08080;
-    }
-    .status-badge.no-raid {
-      background: rgba(40,130,80,0.15);
-      border: 1px solid #2a8040;
-      color: #60c080;
-    }
+    .status-section { padding: 20px 24px 16px; text-align: center; border-bottom: 1px solid rgba(160,120,48,0.3); }
+    .status-badge { display: inline-block; padding: 8px 20px; border-radius: 2px; font-size: 13px; letter-spacing: 2px; font-weight: 600; text-transform: uppercase; }
+    .status-badge.raid       { background: rgba(180,50,50,0.2);    border: 1px solid #c84040; color: #f08080; }
+    .status-badge.raid-today { background: rgba(160,120,20,0.15);  border: 1px solid #a07830; color: #e8d070; }
+    .status-badge.no-raid    { background: rgba(40,130,80,0.15);   border: 1px solid #2a8040; color: #60c080; }
 
-    .countdown-section {
-      padding: 16px 24px;
-      text-align: center;
-      border-bottom: 1px solid rgba(160,120,48,0.3);
-    }
-    .countdown-label {
-      font-size: 9px;
-      letter-spacing: 3px;
-      color: #5566aa;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-    .countdown-display {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-    }
+    .countdown-section { padding: 16px 24px; text-align: center; border-bottom: 1px solid rgba(160,120,48,0.3); }
+    .countdown-label { font-size: 9px; letter-spacing: 3px; color: #5566aa; text-transform: uppercase; margin-bottom: 10px; }
+    .countdown-display { display: flex; justify-content: center; gap: 8px; }
     .cd-block { display: flex; flex-direction: column; align-items: center; }
     .cd-num {
       background: rgba(160,120,48,0.1);
@@ -203,30 +127,11 @@
       font-variant-numeric: tabular-nums;
       transition: border-color 0.4s, color 0.4s;
     }
-    .card.live .cd-num {
-      border-color: rgba(200,80,60,0.5);
-      color: #f09080;
-    }
-    .cd-sep {
-      font-size: 24px;
-      color: rgba(160,120,48,0.5);
-      align-self: flex-start;
-      padding-top: 8px;
-      line-height: 1;
-    }
-    .cd-unit {
-      font-size: 8px;
-      letter-spacing: 1.5px;
-      color: #5566aa;
-      margin-top: 5px;
-      text-transform: uppercase;
-    }
-    .next-raid-label {
-      font-size: 10px;
-      letter-spacing: 2px;
-      color: #8899cc;
-      margin-top: 10px;
-    }
+    .card.live .cd-num { border-color: rgba(200,80,60,0.5); color: #f09080; }
+    .cd-sep { font-size: 24px; color: rgba(160,120,48,0.5); align-self: flex-start; padding-top: 8px; line-height: 1; }
+    .cd-unit { font-size: 8px; letter-spacing: 1.5px; color: #5566aa; margin-top: 5px; text-transform: uppercase; }
+    .next-raid-label { font-size: 10px; letter-spacing: 2px; color: #8899cc; margin-top: 10px; }
+    .tz-label { font-size: 8px; letter-spacing: 2px; color: rgba(100,110,160,0.5); text-transform: uppercase; margin-top: 8px; }
 
     .schedule-toggle {
       width: 100%;
@@ -252,16 +157,7 @@
 
     .week { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
     .week.open { max-height: 400px; }
-
-    .day-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 9px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 11px;
-      letter-spacing: 1px;
-    }
+    .day-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 24px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 11px; letter-spacing: 1px; }
     .day-row.today-row { background: rgba(160,120,48,0.07); }
     .day-name { color: #8899bb; font-weight: 600; }
     .day-time { font-size: 10px; letter-spacing: 1px; }
@@ -272,41 +168,13 @@
     .dot-noraid { background: #2a7040; }
     .day-left { display: flex; align-items: center; }
 
-    .uwu-container {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 0;
-    }
-    .uwu {
-      position: absolute;
-      font-family: 'Cinzel', serif;
-      font-size: 11px;
-      color: rgba(160, 120, 48, 1);
-      letter-spacing: 3px;
-      user-select: none;
-      animation: uwuFade 6s ease-in-out infinite;
-      opacity: 0;
-    }
-    @keyframes uwuFade {
-      0%   { opacity: 0; }
-      20%  { opacity: 0.07; }
-      80%  { opacity: 0.07; }
-      100% { opacity: 0; }
-    }
-    .footer {
-      padding: 12px 24px;
-      text-align: center;
-      font-size: 8px;
-      letter-spacing: 2px;
-      color: rgba(100,110,160,0.4);
-      text-transform: uppercase;
-    }
+    .footer { padding: 12px 24px; text-align: center; font-size: 8px; letter-spacing: 2px; color: rgba(100,110,160,0.4); text-transform: uppercase; }
   </style>
 </head>
 <body>
+
 <div class="uwu-container" id="uwu-container"></div>
+
 <div class="card" id="card">
   <div class="corner-tr"></div>
   <div class="corner-bl"></div>
@@ -355,10 +223,10 @@
       <div class="cd-block"><div class="cd-num" id="cd-secs">00</div><div class="cd-unit">Secs</div></div>
     </div>
     <div class="next-raid-label" id="next-label">—</div>
-    <div style="font-size:8px;letter-spacing:2px;color:rgba(100,110,160,0.5);text-transform:uppercase;margin-top:8px;">All times Eastern (EST)</div>
+    <div class="tz-label">All times Eastern (EST)</div>
   </div>
 
-  <button class="schedule-toggle" id="toggle-btn" onclick="toggleWeek()">
+  <button class="schedule-toggle" onclick="toggleWeek()">
     View Full Schedule <span class="toggle-arrow" id="arrow">▾</span>
   </button>
 
@@ -399,13 +267,13 @@
 <script>
   const raids = [
     { day: 0, startH: 19, startM: 30, endH: 23, endM: 30, label: 'Sunday' },
-    { day: 3, startH: 21, startM: 0,  endH: 23, endM: 0, label: 'Wednesday' },
-    { day: 5, startH: 21, startM: 0,  endH: 23, endM: 0, label: 'Friday' },
+    { day: 3, startH: 21, startM: 0,  endH: 23, endM: 0,  label: 'Wednesday' },
+    { day: 5, startH: 21, startM: 0,  endH: 23, endM: 0,  label: 'Friday' },
   ];
 
-  const card   = document.getElementById('card');
-  const badge  = document.getElementById('status-badge');
-  const cdLabel = document.getElementById('cd-label');
+  const card      = document.getElementById('card');
+  const badge     = document.getElementById('status-badge');
+  const cdLabel   = document.getElementById('cd-label');
   const nextLabel = document.getElementById('next-label');
 
   function pad(n) { return String(n).padStart(2, '0'); }
@@ -416,11 +284,17 @@
 
   function getCurrentRaid(now) {
     const est = getEST(now);
-    const day = est.getDay(), mins = est.getHours() * 60 + est.getMinutes();
+    const day = est.getDay();
+    const mins = est.getHours() * 60 + est.getMinutes();
     for (const r of raids) {
       if (r.day === day && mins >= r.startH * 60 + r.startM && mins < r.endH * 60 + r.endM) return r;
     }
     return null;
+  }
+
+  function isRaidDay(now) {
+    const est = getEST(now);
+    return raids.some(r => r.day === est.getDay());
   }
 
   function getNextRaid(now) {
@@ -452,14 +326,12 @@
     const est = getEST(now);
     const active = getCurrentRaid(now);
 
-    // Live state
     card.classList.toggle('live', !!active);
 
     if (active) {
-      badge.textContent = 'Yes — Richard Raids!';
+      badge.textContent = "It's Happening Now";
       badge.className = 'status-badge raid';
 
-      // Countdown to end
       const end = new Date(est);
       end.setHours(active.endH, active.endM, 0, 0);
       const diff = end - est;
@@ -473,15 +345,20 @@
       document.getElementById('cd-hours').textContent = pad(h);
       document.getElementById('cd-mins').textContent = pad(m);
       document.getElementById('cd-secs').textContent = pad(s);
-      nextLabel.textContent = active.label + ' raid ends at ' +
-        (active.endH % 12 || 12) + ':' + pad(active.endM) + ' PM';
+      nextLabel.textContent = active.label + ' raid ends at ' + (active.endH % 12 || 12) + ':' + pad(active.endM) + ' PM';
+
     } else {
-      badge.textContent = 'No Raid Today';
-      badge.className = 'status-badge no-raid';
+      if (isRaidDay(now)) {
+        badge.textContent = 'Raid Tonight!';
+        badge.className = 'status-badge raid-today';
+      } else {
+        badge.textContent = 'No Raid Today';
+        badge.className = 'status-badge no-raid';
+      }
 
       const next = getNextRaid(now);
       if (next) {
-        const diff = next.target - now;
+        const diff = next.target - est;
         const totalSecs = Math.floor(diff / 1000);
         const d = Math.floor(totalSecs / 86400);
         const h = Math.floor((totalSecs % 86400) / 3600);
@@ -506,7 +383,7 @@
     document.getElementById('arrow').classList.toggle('open');
   }
 
-  // UwU background spawner
+  // UwU spawner
   const uwuContainer = document.getElementById('uwu-container');
   function spawnUwU() {
     const el = document.createElement('div');
@@ -517,7 +394,7 @@
     el.style.fontSize = (9 + Math.random() * 10).toFixed(1) + 'px';
     el.style.animationDuration = (5 + Math.random() * 6).toFixed(1) + 's';
     el.style.animationDelay = '0s';
-    el.style.transform = `rotate(${(Math.random() * 40 - 20).toFixed(1)}deg)`;
+    el.style.transform = 'rotate(' + (Math.random() * 40 - 20).toFixed(1) + 'deg)';
     uwuContainer.appendChild(el);
     setTimeout(() => el.remove(), 12000);
   }
