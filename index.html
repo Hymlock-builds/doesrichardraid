@@ -21,28 +21,25 @@
       padding: 30px 16px;
     }
 
-    .uwu-container {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 0;
+    .uwu-container, .aether-container {
+      position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
     }
     .uwu {
-      position: absolute;
-      font-family: 'Cinzel', serif;
-      font-size: 11px;
-      color: rgba(160, 120, 48, 1);
-      letter-spacing: 3px;
-      user-select: none;
-      animation: uwuFade 6s ease-in-out infinite;
-      opacity: 0;
+      position: absolute; font-family: 'Cinzel', serif; font-size: 11px;
+      color: rgba(160,120,48,1); letter-spacing: 3px; user-select: none;
+      animation: uwuFade 6s ease-in-out infinite; opacity: 0;
     }
-    @keyframes uwuFade {
-      0%   { opacity: 0; }
-      20%  { opacity: 0.07; }
-      80%  { opacity: 0.07; }
-      100% { opacity: 0; }
+    @keyframes uwuFade { 0%,100%{opacity:0} 20%,80%{opacity:0.07} }
+
+    .aether-particle {
+      position: absolute; border-radius: 50%; pointer-events: none;
+      animation: aetherFloat linear infinite;
+    }
+    @keyframes aetherFloat {
+      0%   { transform: translateY(0) translateX(0) scale(1);   opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateY(-120px) translateX(var(--drift)) scale(0.4); opacity: 0; }
     }
 
     .card {
@@ -57,123 +54,115 @@
       transition: box-shadow 0.6s ease;
     }
     .card.live { animation: borderPulse 2s ease-in-out infinite; }
+    .card.vacation { border-color: #4a7aaa; box-shadow: 0 0 0 1px #1e2540, 0 0 30px rgba(60,120,200,0.2), 0 20px 60px rgba(0,0,0,0.6); }
     @keyframes borderPulse {
-      0%   { box-shadow: 0 0 0 1px #1e2540, 0 0 30px rgba(200,60,60,0.2),  0 20px 60px rgba(0,0,0,0.6); border-color: #a07830; }
-      50%  { box-shadow: 0 0 0 2px #1e2540, 0 0 50px rgba(220,60,60,0.55), 0 20px 60px rgba(0,0,0,0.6); border-color: #e05030; }
-      100% { box-shadow: 0 0 0 1px #1e2540, 0 0 30px rgba(200,60,60,0.2),  0 20px 60px rgba(0,0,0,0.6); border-color: #a07830; }
+      0%,100% { box-shadow: 0 0 0 1px #1e2540, 0 0 30px rgba(200,60,60,0.2),  0 20px 60px rgba(0,0,0,0.6); border-color: #a07830; }
+      50%     { box-shadow: 0 0 0 2px #1e2540, 0 0 50px rgba(220,60,60,0.55), 0 20px 60px rgba(0,0,0,0.6); border-color: #e05030; }
     }
 
-    .card::before, .card::after {
-      content: '';
-      position: absolute;
-      width: 18px; height: 18px;
-      border-color: #c9942a;
-      border-style: solid;
-      z-index: 2;
+    .card::before, .card::after { content:''; position:absolute; width:18px; height:18px; border-color:#c9942a; border-style:solid; z-index:2; }
+    .card::before { top:6px; left:6px; border-width:2px 0 0 2px; }
+    .card::after  { bottom:6px; right:6px; border-width:0 2px 2px 0; }
+    .corner-tr,.corner-bl { position:absolute; width:18px; height:18px; border-color:#c9942a; border-style:solid; z-index:2; }
+    .corner-tr { top:6px; right:6px; border-width:2px 2px 0 0; }
+    .corner-bl { bottom:6px; left:6px; border-width:0 0 2px 2px; }
+
+    .header { background:linear-gradient(90deg,transparent,rgba(160,120,48,0.12),transparent); border-bottom:1px solid #a07830; padding:24px 24px 16px; text-align:center; position:relative; }
+    .icon-wrap { display:inline-block; position:relative; margin-bottom:12px; }
+    .live-ring,.live-ring2 { display:none; position:absolute; border-radius:50%; border:2px solid #e05030; animation:ringPulse 2s ease-in-out infinite; }
+    .live-ring  { inset:-6px; }
+    .live-ring2 { inset:-12px; border-width:1px; border-color:rgba(220,80,40,0.4); animation-delay:0.4s; }
+    .card.live .live-ring, .card.live .live-ring2 { display:block; }
+    @keyframes ringPulse { 0%,100%{opacity:0.8;transform:scale(1)} 50%{opacity:0.3;transform:scale(1.1)} }
+    .crystal-icon { display:block; width:48px; height:48px; }
+
+    .live-dot { display:none; align-items:center; justify-content:center; gap:6px; margin-bottom:6px; font-size:9px; letter-spacing:3px; color:#e07060; text-transform:uppercase; }
+    .live-dot-circle { width:7px; height:7px; border-radius:50%; background:#e05030; animation:dotBlink 1.2s ease-in-out infinite; }
+    @keyframes dotBlink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    .card.live .live-dot { display:flex; }
+
+    .title { font-family:'Cinzel Decorative',serif; font-size:11px; letter-spacing:4px; color:#8899cc; text-transform:uppercase; margin-bottom:4px; }
+    .question { font-family:'Cinzel Decorative',serif; font-size:20px; font-weight:700; color:#e8d8a0; letter-spacing:1px; }
+
+    .status-section { padding:20px 24px 16px; text-align:center; border-bottom:1px solid rgba(160,120,48,0.3); }
+    .status-badge { display:inline-block; padding:8px 20px; border-radius:2px; font-size:13px; letter-spacing:2px; font-weight:600; text-transform:uppercase; }
+    .status-badge.raid       { background:rgba(180,50,50,0.2);   border:1px solid #c84040; color:#f08080; }
+    .status-badge.raid-today { background:rgba(160,120,20,0.15); border:1px solid #a07830; color:#e8d070; }
+    .status-badge.no-raid    { background:rgba(40,130,80,0.15);  border:1px solid #2a8040; color:#60c080; }
+    .status-badge.vacation   { background:rgba(40,90,160,0.15);  border:1px solid #4a7aaa; color:#80b8e8; }
+
+    .vacation-info { font-size:10px; letter-spacing:2px; color:#5588aa; margin-top:8px; }
+
+    .countdown-section { padding:16px 24px; text-align:center; border-bottom:1px solid rgba(160,120,48,0.3); }
+    .countdown-label { font-size:9px; letter-spacing:3px; color:#5566aa; text-transform:uppercase; margin-bottom:10px; }
+    .countdown-display { display:flex; justify-content:center; gap:8px; }
+    .cd-block { display:flex; flex-direction:column; align-items:center; }
+    .cd-num { background:rgba(160,120,48,0.1); border:1px solid rgba(160,120,48,0.4); border-radius:3px; width:52px; font-size:26px; font-weight:700; color:#e8d070; line-height:1; padding:8px 4px 6px; font-variant-numeric:tabular-nums; transition:border-color 0.4s,color 0.4s; }
+    .card.live .cd-num { border-color:rgba(200,80,60,0.5); color:#f09080; }
+    .card.vacation .cd-num { border-color:rgba(60,120,200,0.4); color:#80b8e8; }
+    .cd-sep { font-size:24px; color:rgba(160,120,48,0.5); align-self:flex-start; padding-top:8px; line-height:1; }
+    .cd-unit { font-size:8px; letter-spacing:1.5px; color:#5566aa; margin-top:5px; text-transform:uppercase; }
+    .next-raid-label { font-size:10px; letter-spacing:2px; color:#8899cc; margin-top:10px; }
+    .tz-label { font-size:8px; letter-spacing:2px; color:rgba(100,110,160,0.5); text-transform:uppercase; margin-top:8px; }
+
+    .schedule-toggle { width:100%; background:none; border:none; border-bottom:1px solid rgba(160,120,48,0.3); padding:12px 24px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-family:'Cinzel',serif; font-size:9px; letter-spacing:3px; color:#8090c0; text-transform:uppercase; transition:background 0.2s,color 0.2s; }
+    .schedule-toggle:hover { background:rgba(160,120,48,0.07); color:#c9a050; }
+    .toggle-arrow { font-size:10px; transition:transform 0.25s; }
+    .toggle-arrow.open { transform:rotate(180deg); }
+
+    .week { max-height:0; overflow:hidden; transition:max-height 0.35s ease; }
+    .week.open { max-height:400px; }
+    .day-row { display:flex; justify-content:space-between; align-items:center; padding:9px 24px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:11px; letter-spacing:1px; }
+    .day-row.today-row { background:rgba(160,120,48,0.07); }
+    .day-name { color:#8899bb; font-weight:600; }
+    .day-time { font-size:10px; letter-spacing:1px; }
+    .raid-time { color:#e07060; }
+    .no-raid-time { color:#4a6a4a; }
+    .day-dot { width:7px; height:7px; border-radius:50%; margin-right:8px; flex-shrink:0; }
+    .dot-raid { background:#c84040; }
+    .dot-noraid { background:#2a7040; }
+    .day-left { display:flex; align-items:center; }
+
+    /* Vacation modal */
+    .vac-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; align-items:center; justify-content:center; }
+    .vac-overlay.open { display:flex; }
+    .vac-modal {
+      background:linear-gradient(160deg,#12172a,#0e1220);
+      border:1px solid #4a7aaa;
+      border-radius:4px;
+      padding:28px 28px 24px;
+      width:300px;
+      text-align:center;
+      box-shadow:0 0 40px rgba(60,120,200,0.2);
+      position:relative;
     }
-    .card::before { top: 6px; left: 6px; border-width: 2px 0 0 2px; }
-    .card::after  { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
-    .corner-tr, .corner-bl { position: absolute; width: 18px; height: 18px; border-color: #c9942a; border-style: solid; z-index: 2; }
-    .corner-tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; }
-    .corner-bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
+    .vac-modal::before,.vac-modal::after { content:''; position:absolute; width:14px; height:14px; border-color:#4a7aaa; border-style:solid; }
+    .vac-modal::before { top:5px; left:5px; border-width:1px 0 0 1px; }
+    .vac-modal::after  { bottom:5px; right:5px; border-width:0 1px 1px 0; }
+    .vac-title { font-family:'Cinzel Decorative',serif; font-size:13px; color:#80b8e8; letter-spacing:3px; margin-bottom:6px; }
+    .vac-sub { font-size:9px; letter-spacing:2px; color:#5577aa; text-transform:uppercase; margin-bottom:20px; }
+    .vac-days-label { font-size:9px; letter-spacing:2px; color:#5577aa; text-transform:uppercase; margin-bottom:10px; }
+    .vac-days-input { background:rgba(60,100,160,0.1); border:1px solid #4a7aaa; border-radius:3px; color:#80b8e8; font-family:'Cinzel',serif; font-size:22px; text-align:center; width:80px; padding:8px 4px; }
+    .vac-days-input:focus { outline:none; border-color:#80b8e8; }
+    .vac-btn-row { display:flex; gap:10px; margin-top:20px; justify-content:center; }
+    .vac-btn { font-family:'Cinzel',serif; font-size:9px; letter-spacing:2px; text-transform:uppercase; padding:8px 16px; border-radius:2px; cursor:pointer; border:1px solid; transition:background 0.2s; }
+    .vac-btn.confirm { background:rgba(60,100,160,0.2); border-color:#4a7aaa; color:#80b8e8; }
+    .vac-btn.confirm:hover { background:rgba(60,100,160,0.35); }
+    .vac-btn.cancel  { background:rgba(160,120,48,0.1); border-color:#a07830; color:#c9a050; }
+    .vac-btn.cancel:hover { background:rgba(160,120,48,0.2); }
+    .vac-btn.end { background:rgba(160,50,50,0.15); border-color:#c84040; color:#f08080; }
+    .vac-btn.end:hover { background:rgba(160,50,50,0.3); }
 
-    .header {
-      background: linear-gradient(90deg, transparent, rgba(160,120,48,0.12), transparent);
-      border-bottom: 1px solid #a07830;
-      padding: 24px 24px 16px;
-      text-align: center;
-      position: relative;
-    }
-    .icon-wrap { display: inline-block; position: relative; margin-bottom: 12px; }
-    .live-ring, .live-ring2 { display: none; position: absolute; border-radius: 50%; border: 2px solid #e05030; animation: ringPulse 2s ease-in-out infinite; }
-    .live-ring  { inset: -6px; }
-    .live-ring2 { inset: -12px; border-width: 1px; border-color: rgba(220,80,40,0.4); animation-delay: 0.4s; }
-    .card.live .live-ring, .card.live .live-ring2 { display: block; }
-    @keyframes ringPulse {
-      0%   { opacity: 0.8; transform: scale(1); }
-      50%  { opacity: 0.3; transform: scale(1.1); }
-      100% { opacity: 0.8; transform: scale(1); }
-    }
-    .crystal-icon { display: block; width: 48px; height: 48px; }
+    .vac-trigger { width:100%; background:none; border:none; border-top:1px solid rgba(160,120,48,0.2); padding:10px 24px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-family:'Cinzel',serif; font-size:8px; letter-spacing:3px; color:rgba(100,110,160,0.45); text-transform:uppercase; transition:background 0.2s,color 0.2s; }
+    .vac-trigger:hover { background:rgba(60,100,200,0.06); color:#6688bb; }
 
-    .live-dot { display: none; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px; font-size: 9px; letter-spacing: 3px; color: #e07060; text-transform: uppercase; }
-    .live-dot-circle { width: 7px; height: 7px; border-radius: 50%; background: #e05030; animation: dotBlink 1.2s ease-in-out infinite; }
-    @keyframes dotBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-    .card.live .live-dot { display: flex; }
-
-    .title { font-family: 'Cinzel Decorative', serif; font-size: 11px; letter-spacing: 4px; color: #8899cc; text-transform: uppercase; margin-bottom: 4px; }
-    .question { font-family: 'Cinzel Decorative', serif; font-size: 20px; font-weight: 700; color: #e8d8a0; letter-spacing: 1px; }
-
-    .status-section { padding: 20px 24px 16px; text-align: center; border-bottom: 1px solid rgba(160,120,48,0.3); }
-    .status-badge { display: inline-block; padding: 8px 20px; border-radius: 2px; font-size: 13px; letter-spacing: 2px; font-weight: 600; text-transform: uppercase; }
-    .status-badge.raid       { background: rgba(180,50,50,0.2);    border: 1px solid #c84040; color: #f08080; }
-    .status-badge.raid-today { background: rgba(160,120,20,0.15);  border: 1px solid #a07830; color: #e8d070; }
-    .status-badge.no-raid    { background: rgba(40,130,80,0.15);   border: 1px solid #2a8040; color: #60c080; }
-
-    .countdown-section { padding: 16px 24px; text-align: center; border-bottom: 1px solid rgba(160,120,48,0.3); }
-    .countdown-label { font-size: 9px; letter-spacing: 3px; color: #5566aa; text-transform: uppercase; margin-bottom: 10px; }
-    .countdown-display { display: flex; justify-content: center; gap: 8px; }
-    .cd-block { display: flex; flex-direction: column; align-items: center; }
-    .cd-num {
-      background: rgba(160,120,48,0.1);
-      border: 1px solid rgba(160,120,48,0.4);
-      border-radius: 3px;
-      width: 52px;
-      font-size: 26px;
-      font-weight: 700;
-      color: #e8d070;
-      line-height: 1;
-      padding: 8px 4px 6px;
-      font-variant-numeric: tabular-nums;
-      transition: border-color 0.4s, color 0.4s;
-    }
-    .card.live .cd-num { border-color: rgba(200,80,60,0.5); color: #f09080; }
-    .cd-sep { font-size: 24px; color: rgba(160,120,48,0.5); align-self: flex-start; padding-top: 8px; line-height: 1; }
-    .cd-unit { font-size: 8px; letter-spacing: 1.5px; color: #5566aa; margin-top: 5px; text-transform: uppercase; }
-    .next-raid-label { font-size: 10px; letter-spacing: 2px; color: #8899cc; margin-top: 10px; }
-    .tz-label { font-size: 8px; letter-spacing: 2px; color: rgba(100,110,160,0.5); text-transform: uppercase; margin-top: 8px; }
-
-    .schedule-toggle {
-      width: 100%;
-      background: none;
-      border: none;
-      border-bottom: 1px solid rgba(160,120,48,0.3);
-      padding: 12px 24px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-family: 'Cinzel', serif;
-      font-size: 9px;
-      letter-spacing: 3px;
-      color: #8090c0;
-      text-transform: uppercase;
-      transition: background 0.2s, color 0.2s;
-    }
-    .schedule-toggle:hover { background: rgba(160,120,48,0.07); color: #c9a050; }
-    .toggle-arrow { font-size: 10px; transition: transform 0.25s; }
-    .toggle-arrow.open { transform: rotate(180deg); }
-
-    .week { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
-    .week.open { max-height: 400px; }
-    .day-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 24px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 11px; letter-spacing: 1px; }
-    .day-row.today-row { background: rgba(160,120,48,0.07); }
-    .day-name { color: #8899bb; font-weight: 600; }
-    .day-time { font-size: 10px; letter-spacing: 1px; }
-    .raid-time { color: #e07060; }
-    .no-raid-time { color: #4a6a4a; }
-    .day-dot { width: 7px; height: 7px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
-    .dot-raid { background: #c84040; }
-    .dot-noraid { background: #2a7040; }
-    .day-left { display: flex; align-items: center; }
-
-    .footer { padding: 12px 24px; text-align: center; font-size: 8px; letter-spacing: 2px; color: rgba(100,110,160,0.4); text-transform: uppercase; }
+    .footer { padding:10px 24px 12px; text-align:center; font-size:8px; letter-spacing:2px; color:rgba(100,110,160,0.4); text-transform:uppercase; }
   </style>
 </head>
 <body>
 
 <div class="uwu-container" id="uwu-container"></div>
+<div class="aether-container" id="aether-container"></div>
 
 <div class="card" id="card">
   <div class="corner-tr"></div>
@@ -185,17 +174,17 @@
       <div class="live-ring"></div>
       <div class="live-ring2"></div>
       <svg class="crystal-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g transform="rotate(-8, 24, 24)">
-          <rect x="6" y="6" width="36" height="36" rx="6" ry="6" fill="#b8a030"/>
-          <rect x="6" y="6" width="36" height="36" rx="6" ry="6" fill="url(#stoneShade)"/>
-          <rect x="8" y="8" width="32" height="32" rx="5" ry="5" fill="none" stroke="#e8d060" stroke-width="1.2" opacity="0.5"/>
-          <rect x="10" y="10" width="28" height="28" rx="4" ry="4" fill="#9a8820" opacity="0.6"/>
+        <g transform="rotate(-8,24,24)">
+          <rect x="6" y="6" width="36" height="36" rx="6" fill="#b8a030"/>
+          <rect x="6" y="6" width="36" height="36" rx="6" fill="url(#ss)"/>
+          <rect x="8" y="8" width="32" height="32" rx="5" fill="none" stroke="#e8d060" stroke-width="1.2" opacity="0.5"/>
+          <rect x="10" y="10" width="28" height="28" rx="4" fill="#9a8820" opacity="0.6"/>
           <circle cx="24" cy="24" r="9" fill="none" stroke="#f0e040" stroke-width="2" opacity="0.9"/>
           <line x1="17" y1="31" x2="31" y2="17" stroke="#f0e040" stroke-width="2.2" stroke-linecap="round" opacity="0.95"/>
           <circle cx="24" cy="24" r="2" fill="#fff8a0" opacity="0.7"/>
         </g>
         <defs>
-          <radialGradient id="stoneShade" cx="35%" cy="30%" r="70%">
+          <radialGradient id="ss" cx="35%" cy="30%" r="70%">
             <stop offset="0%" stop-color="#e8d060" stop-opacity="0.3"/>
             <stop offset="60%" stop-color="#b8a030" stop-opacity="0"/>
             <stop offset="100%" stop-color="#504010" stop-opacity="0.5"/>
@@ -209,6 +198,7 @@
 
   <div class="status-section">
     <span id="status-badge" class="status-badge">—</span>
+    <div class="vacation-info" id="vac-info" style="display:none;"></div>
   </div>
 
   <div class="countdown-section">
@@ -231,149 +221,165 @@
   </button>
 
   <div class="week" id="week">
-    <div class="day-row" id="row-0">
-      <div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Sunday</span></div>
-      <span class="day-time raid-time">7:30 – 11:30 PM</span>
-    </div>
-    <div class="day-row" id="row-1">
-      <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Monday</span></div>
-      <span class="day-time no-raid-time">No Raid</span>
-    </div>
-    <div class="day-row" id="row-2">
-      <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Tuesday</span></div>
-      <span class="day-time no-raid-time">No Raid</span>
-    </div>
-    <div class="day-row" id="row-3">
-      <div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Wednesday</span></div>
-      <span class="day-time raid-time">9:00 – 11:00 PM</span>
-    </div>
-    <div class="day-row" id="row-4">
-      <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Thursday</span></div>
-      <span class="day-time no-raid-time">No Raid</span>
-    </div>
-    <div class="day-row" id="row-5">
-      <div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Friday</span></div>
-      <span class="day-time raid-time">9:00 – 11:00 PM</span>
-    </div>
-    <div class="day-row" id="row-6" style="border-bottom:none;">
-      <div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Saturday</span></div>
-      <span class="day-time no-raid-time">No Raid</span>
-    </div>
+    <div class="day-row" id="row-0"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Sunday</span></div><span class="day-time raid-time">7:30 – 11:30 PM</span></div>
+    <div class="day-row" id="row-1"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Monday</span></div><span class="day-time no-raid-time">No Raid</span></div>
+    <div class="day-row" id="row-2"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Tuesday</span></div><span class="day-time no-raid-time">No Raid</span></div>
+    <div class="day-row" id="row-3"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Wednesday</span></div><span class="day-time raid-time">9:00 – 11:00 PM</span></div>
+    <div class="day-row" id="row-4"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Thursday</span></div><span class="day-time no-raid-time">No Raid</span></div>
+    <div class="day-row" id="row-5"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Friday</span></div><span class="day-time raid-time">9:00 – 11:00 PM</span></div>
+    <div class="day-row" id="row-6" style="border-bottom:none;"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Saturday</span></div><span class="day-time no-raid-time">No Raid</span></div>
   </div>
 
-  <div class="footer">Gunbreaking Out</div>
+  <button class="vac-trigger" id="vac-trigger" style="display:none;" onclick="openVacModal()">⚓ Vacation Mode</button>
+  <div class="footer" id="footer-text">Gunbreaking Out</div>
+</div>
+
+<!-- Vacation Modal -->
+<div class="vac-overlay" id="vac-overlay">
+  <div class="vac-modal">
+    <div class="vac-title">Vacation Mode</div>
+    <div class="vac-sub">Richard is taking a break from Eorzea</div>
+    <div class="vac-days-label">How many days?</div>
+    <input class="vac-days-input" type="number" id="vac-days-input" min="1" max="365" value="7" />
+    <div class="vac-btn-row">
+      <button class="vac-btn confirm" onclick="setVacation()">Activate</button>
+      <button class="vac-btn end" id="end-vac-btn" onclick="endVacation()" style="display:none;">End Early</button>
+      <button class="vac-btn cancel" onclick="closeVacModal()">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <script>
   const raids = [
-    { day: 0, startH: 19, startM: 30, endH: 23, endM: 30, label: 'Sunday' },
-    { day: 3, startH: 21, startM: 0,  endH: 23, endM: 0,  label: 'Wednesday' },
-    { day: 5, startH: 21, startM: 0,  endH: 23, endM: 0,  label: 'Friday' },
+    { day:0, startH:19, startM:30, endH:23, endM:30, label:'Sunday' },
+    { day:3, startH:21, startM:0,  endH:23, endM:0,  label:'Wednesday' },
+    { day:5, startH:21, startM:0,  endH:23, endM:0,  label:'Friday' },
   ];
 
   const card      = document.getElementById('card');
   const badge     = document.getElementById('status-badge');
   const cdLabel   = document.getElementById('cd-label');
   const nextLabel = document.getElementById('next-label');
+  const vacInfo   = document.getElementById('vac-info');
 
-  function pad(n) { return String(n).padStart(2, '0'); }
-
-  function getEST(now) {
-    return new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-  }
+  function pad(n) { return String(n).padStart(2,'0'); }
+  function getEST(now) { return new Date(now.toLocaleString('en-US',{timeZone:'America/New_York'})); }
 
   function getCurrentRaid(now) {
-    const est = getEST(now);
-    const day = est.getDay();
-    const mins = est.getHours() * 60 + est.getMinutes();
-    for (const r of raids) {
-      if (r.day === day && mins >= r.startH * 60 + r.startM && mins < r.endH * 60 + r.endM) return r;
-    }
+    const est = getEST(now), day = est.getDay(), mins = est.getHours()*60+est.getMinutes();
+    for (const r of raids) if (r.day===day && mins>=r.startH*60+r.startM && mins<r.endH*60+r.endM) return r;
     return null;
   }
-
-  function isRaidDay(now) {
-    const est = getEST(now);
-    return raids.some(r => r.day === est.getDay());
-  }
-
+  function isRaidDay(now) { return raids.some(r=>r.day===getEST(now).getDay()); }
   function getNextRaid(now) {
-    const est = getEST(now);
-    let best = null, bestDiff = Infinity;
-    for (const r of raids) {
-      for (let w = 0; w <= 1; w++) {
-        const t = new Date(est);
-        let d = (r.day - est.getDay() + 7) % 7 + w * 7;
-        if (d === 0 && est.getHours() * 60 + est.getMinutes() >= r.startH * 60 + r.startM) d = 7;
-        t.setDate(est.getDate() + d);
-        t.setHours(r.startH, r.startM, 0, 0);
-        const diff = t - est;
-        if (diff > 0 && diff < bestDiff) { bestDiff = diff; best = { ...r, target: t }; }
-      }
+    const est=getEST(now); let best=null,bestDiff=Infinity;
+    for (const r of raids) for (let w=0;w<=1;w++) {
+      const t=new Date(est);
+      let d=(r.day-est.getDay()+7)%7+w*7;
+      if (d===0&&est.getHours()*60+est.getMinutes()>=r.startH*60+r.startM) d=7;
+      t.setDate(est.getDate()+d); t.setHours(r.startH,r.startM,0,0);
+      const diff=t-est;
+      if (diff>0&&diff<bestDiff){bestDiff=diff;best={...r,target:t};}
     }
     return best;
   }
 
-  function highlightToday() {
-    const today = getEST(new Date()).getDay();
-    for (let i = 0; i <= 6; i++) {
-      document.getElementById('row-' + i).classList.toggle('today-row', i === today);
-    }
+  // Vacation persistence - shared storage
+  async function getVacationEnd() {
+    try {
+      const result = await window.storage.get('vacationEnd', true);
+      return result ? parseInt(result.value) : null;
+    } catch(e) { return null; }
+  }
+  async function saveVacationEnd(ts) {
+    try { await window.storage.set('vacationEnd', String(ts), true); } catch(e) {}
+  }
+  async function clearVacation() {
+    try { await window.storage.delete('vacationEnd', true); } catch(e) {}
+  }
+  async function isOnVacation() {
+    const end = await getVacationEnd();
+    return end && Date.now() < end;
   }
 
-  function tick() {
-    const now = new Date();
-    const est = getEST(now);
-    const active = getCurrentRaid(now);
+  function openVacModal() {
+    document.getElementById('end-vac-btn').style.display = 'none';
+    isOnVacation().then(v => {
+      document.getElementById('end-vac-btn').style.display = v ? 'inline-block' : 'none';
+    });
+    document.getElementById('vac-overlay').classList.add('open');
+  }
+  function closeVacModal() { document.getElementById('vac-overlay').classList.remove('open'); }
+  async function setVacation() {
+    const days = Math.max(1, parseInt(document.getElementById('vac-days-input').value) || 1);
+    await saveVacationEnd(Date.now() + days * 86400000);
+    closeVacModal();
+    tick();
+  }
+  async function endVacation() { await clearVacation(); closeVacModal(); tick(); }
 
+  function highlightToday() {
+    const today = getEST(new Date()).getDay();
+    for (let i=0;i<=6;i++) document.getElementById('row-'+i).classList.toggle('today-row',i===today);
+  }
+
+  async function tick() {
+    const now = new Date(), est = getEST(now);
+    const onVac = await isOnVacation();
+
+    if (onVac) {
+      const end = await getVacationEnd();
+      const diff = end - Date.now();
+      const totalSecs = Math.floor(diff/1000);
+      const d = Math.floor(totalSecs/86400);
+      const h = Math.floor((totalSecs%86400)/3600);
+      const m = Math.floor((totalSecs%3600)/60);
+      const s = totalSecs%60;
+
+      card.classList.remove('live');
+      card.classList.add('vacation');
+      badge.textContent = 'On Vacation';
+      badge.className = 'status-badge vacation';
+      vacInfo.style.display = 'block';
+      vacInfo.textContent = 'Returns in ' + d + 'd ' + pad(h) + 'h ' + pad(m) + 'm';
+      cdLabel.textContent = 'Vacation Ends In';
+      document.getElementById('cd-days').textContent  = pad(d);
+      document.getElementById('cd-hours').textContent = pad(h);
+      document.getElementById('cd-mins').textContent  = pad(m);
+      document.getElementById('cd-secs').textContent  = pad(s);
+      nextLabel.textContent = 'No raids until Richard returns';
+      return;
+    }
+
+    card.classList.remove('vacation');
+    vacInfo.style.display = 'none';
+    const active = getCurrentRaid(now);
     card.classList.toggle('live', !!active);
 
     if (active) {
       badge.textContent = "It's Happening Now";
       badge.className = 'status-badge raid';
-
-      const end = new Date(est);
-      end.setHours(active.endH, active.endM, 0, 0);
-      const diff = end - est;
-      const totalSecs = Math.max(0, Math.floor(diff / 1000));
-      const h = Math.floor(totalSecs / 3600);
-      const m = Math.floor((totalSecs % 3600) / 60);
-      const s = totalSecs % 60;
-
+      const end = new Date(est); end.setHours(active.endH,active.endM,0,0);
+      const diff = end-est, ts = Math.max(0,Math.floor(diff/1000));
       cdLabel.textContent = 'Raid Ends In';
-      document.getElementById('cd-days').textContent = '00';
-      document.getElementById('cd-hours').textContent = pad(h);
-      document.getElementById('cd-mins').textContent = pad(m);
-      document.getElementById('cd-secs').textContent = pad(s);
-      nextLabel.textContent = active.label + ' raid ends at ' + (active.endH % 12 || 12) + ':' + pad(active.endM) + ' PM';
-
+      document.getElementById('cd-days').textContent  = '00';
+      document.getElementById('cd-hours').textContent = pad(Math.floor(ts/3600));
+      document.getElementById('cd-mins').textContent  = pad(Math.floor((ts%3600)/60));
+      document.getElementById('cd-secs').textContent  = pad(ts%60);
+      nextLabel.textContent = active.label+' raid ends at '+(active.endH%12||12)+':'+pad(active.endM)+' PM';
     } else {
-      if (isRaidDay(now)) {
-        badge.textContent = 'Raid Tonight!';
-        badge.className = 'status-badge raid-today';
-      } else {
-        badge.textContent = 'No Raid Today';
-        badge.className = 'status-badge no-raid';
-      }
-
+      badge.className = isRaidDay(now) ? 'status-badge raid-today' : 'status-badge no-raid';
+      badge.textContent = isRaidDay(now) ? 'Raid Tonight!' : 'No Raid Today';
       const next = getNextRaid(now);
       if (next) {
-        const diff = next.target - est;
-        const totalSecs = Math.floor(diff / 1000);
-        const d = Math.floor(totalSecs / 86400);
-        const h = Math.floor((totalSecs % 86400) / 3600);
-        const m = Math.floor((totalSecs % 3600) / 60);
-        const s = totalSecs % 60;
-
+        const diff = next.target-est, ts = Math.floor(diff/1000);
         cdLabel.textContent = 'Next Raid Begins In';
-        document.getElementById('cd-days').textContent = pad(d);
-        document.getElementById('cd-hours').textContent = pad(h);
-        document.getElementById('cd-mins').textContent = pad(m);
-        document.getElementById('cd-secs').textContent = pad(s);
-
-        const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-        const startStr = (next.startH % 12 || 12) + ':' + pad(next.startM) + ' ' + (next.startH >= 12 ? 'PM' : 'AM');
-        nextLabel.textContent = days[next.target.getDay()] + ' at ' + startStr;
+        document.getElementById('cd-days').textContent  = pad(Math.floor(ts/86400));
+        document.getElementById('cd-hours').textContent = pad(Math.floor((ts%86400)/3600));
+        document.getElementById('cd-mins').textContent  = pad(Math.floor((ts%3600)/60));
+        document.getElementById('cd-secs').textContent  = pad(ts%60);
+        const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        nextLabel.textContent = days[next.target.getDay()]+' at '+(next.startH%12||12)+':'+pad(next.startM)+' '+(next.startH>=12?'PM':'AM');
       }
     }
   }
@@ -389,17 +395,57 @@
     const el = document.createElement('div');
     el.className = 'uwu';
     el.textContent = 'UwU';
-    el.style.left = Math.random() * 95 + '%';
-    el.style.top  = Math.random() * 95 + '%';
-    el.style.fontSize = (9 + Math.random() * 10).toFixed(1) + 'px';
-    el.style.animationDuration = (5 + Math.random() * 6).toFixed(1) + 's';
-    el.style.animationDelay = '0s';
-    el.style.transform = 'rotate(' + (Math.random() * 40 - 20).toFixed(1) + 'deg)';
+    el.style.cssText = 'left:'+Math.random()*95+'%;top:'+Math.random()*95+'%;font-size:'+(9+Math.random()*10).toFixed(1)+'px;animation-duration:'+(5+Math.random()*6).toFixed(1)+'s;transform:rotate('+(Math.random()*40-20).toFixed(1)+'deg)';
     uwuContainer.appendChild(el);
-    setTimeout(() => el.remove(), 12000);
+    setTimeout(()=>el.remove(), 12000);
   }
   setInterval(spawnUwU, 2200);
   setTimeout(spawnUwU, 800);
+
+  // Aether particle spawner
+  const aetherContainer = document.getElementById('aether-container');
+  const aetherColors = [
+    'rgba(140,100,255,VAL)','rgba(80,160,255,VAL)','rgba(160,220,255,VAL)',
+    'rgba(200,180,255,VAL)','rgba(100,200,220,VAL)','rgba(220,200,255,VAL)'
+  ];
+  function spawnAether() {
+    const el = document.createElement('div');
+    el.className = 'aether-particle';
+    const size = 2 + Math.random() * 4;
+    const opacity = 0.3 + Math.random() * 0.5;
+    const color = aetherColors[Math.floor(Math.random()*aetherColors.length)].replace('VAL', opacity.toFixed(2));
+    const duration = 4 + Math.random() * 8;
+    const drift = (Math.random()*60-30).toFixed(0)+'px';
+    el.style.cssText = [
+      'left:'+(Math.random()*100)+'%',
+      'top:'+(60+Math.random()*40)+'%',
+      'width:'+size+'px',
+      'height:'+size+'px',
+      'background:'+color,
+      'box-shadow:0 0 '+(size*2)+'px '+color,
+      '--drift:'+drift,
+      'animation-duration:'+duration.toFixed(1)+'s',
+      'animation-delay:'+(Math.random()*4).toFixed(1)+'s',
+    ].join(';');
+    aetherContainer.appendChild(el);
+    setTimeout(()=>el.remove(), (duration+4)*1000);
+  }
+  setInterval(spawnAether, 400);
+  for (let i=0;i<12;i++) setTimeout(spawnAether, i*200);
+
+  // Secret footer click trigger
+  let footerClicks = 0, footerTimer = null;
+  document.getElementById('footer-text').addEventListener('click', () => {
+    footerClicks++;
+    clearTimeout(footerTimer);
+    if (footerClicks >= 15) {
+      footerClicks = 0;
+      document.getElementById('vac-trigger').style.display = 'block';
+      openVacModal();
+    } else {
+      footerTimer = setTimeout(() => { footerClicks = 0; }, 3000);
+    }
+  });
 
   highlightToday();
   tick();
