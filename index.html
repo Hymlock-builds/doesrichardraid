@@ -314,9 +314,9 @@
     const days = Math.max(1, parseInt(document.getElementById('vac-days-input').value) || 1);
     await saveVacationEnd(Date.now() + days * 86400000);
     closeVacModal();
-    tick();
+    await tick();
   }
-  async function endVacation() { await clearVacation(); closeVacModal(); tick(); }
+  async function endVacation() { await clearVacation(); closeVacModal(); await tick(); }
 
   function highlightToday() {
     const today = getEST(new Date()).getDay();
@@ -449,7 +449,7 @@
 
   highlightToday();
   tick();
-  setInterval(tick, 1000);
+  setInterval(() => tick(), 1000);
 </script>
 </body>
 </html>
