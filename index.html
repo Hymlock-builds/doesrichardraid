@@ -97,18 +97,34 @@
     .dot-raid { background:#c84040; }
     .dot-noraid { background:#2a7040; }
     .day-left { display:flex; align-items:center; }
-    .vac-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; align-items:center; justify-content:center; }
+
+    .vac-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; align-items:center; justify-content:center; padding:20px; }
     .vac-overlay.open { display:flex; }
-    .vac-modal { background:linear-gradient(160deg,#12172a,#0e1220); border:1px solid #4a7aaa; border-radius:4px; padding:28px 28px 24px; width:300px; text-align:center; box-shadow:0 0 40px rgba(60,120,200,0.2); position:relative; }
+    .vac-modal { background:linear-gradient(160deg,#12172a,#0e1220); border:1px solid #4a7aaa; border-radius:4px; padding:26px 26px 22px; width:330px; max-height:90vh; overflow-y:auto; text-align:center; box-shadow:0 0 40px rgba(60,120,200,0.2); position:relative; }
     .vac-modal::before,.vac-modal::after { content:''; position:absolute; width:14px; height:14px; border-color:#4a7aaa; border-style:solid; }
     .vac-modal::before { top:5px; left:5px; border-width:1px 0 0 1px; }
     .vac-modal::after  { bottom:5px; right:5px; border-width:0 1px 1px 0; }
-    .vac-title { font-family:'Cinzel Decorative',serif; font-size:13px; color:#80b8e8; letter-spacing:3px; margin-bottom:6px; }
+    .vac-title { font-family:'Cinzel Decorative',serif; font-size:14px; color:#80b8e8; letter-spacing:3px; margin-bottom:4px; }
     .vac-sub { font-size:9px; letter-spacing:2px; color:#5577aa; text-transform:uppercase; margin-bottom:20px; }
+
+    .admin-section-label { font-size:9px; letter-spacing:3px; color:#80b8e8; text-transform:uppercase; margin-bottom:10px; text-align:left; border-bottom:1px solid rgba(74,122,170,0.2); padding-bottom:5px; }
+    .admin-divider { height:1px; background:rgba(74,122,170,0.2); margin:16px 0; }
+
+    .sched-editor { text-align:left; margin-bottom:12px; }
+    .sched-row { display:flex; align-items:center; justify-content:space-between; padding:4px 0; gap:8px; }
+    .sched-day { display:flex; align-items:center; gap:7px; font-size:11px; color:#a8b8d8; letter-spacing:1px; cursor:pointer; min-width:52px; user-select:none; }
+    .sched-check { accent-color:#4a7aaa; cursor:pointer; width:14px; height:14px; }
+    .sched-times { display:flex; align-items:center; gap:4px; }
+    .sched-dash { color:#5577aa; font-size:11px; }
+    .sched-time { background:rgba(60,100,160,0.08); border:1px solid rgba(74,122,170,0.4); border-radius:3px; color:#a8c8e8; font-family:'Cinzel',serif; font-size:11px; padding:3px 4px; }
+    .sched-time:disabled { opacity:0.25; }
+    .sched-time:focus { outline:none; border-color:#80b8e8; }
+    .sched-time::-webkit-calendar-picker-indicator { filter:invert(0.7); cursor:pointer; }
+
     .vac-days-label { font-size:9px; letter-spacing:2px; color:#5577aa; text-transform:uppercase; margin-bottom:10px; }
     .vac-days-input { background:rgba(60,100,160,0.1); border:1px solid #4a7aaa; border-radius:3px; color:#80b8e8; font-family:'Cinzel',serif; font-size:22px; text-align:center; width:80px; padding:8px 4px; }
     .vac-days-input:focus { outline:none; border-color:#80b8e8; }
-    .vac-btn-row { display:flex; gap:10px; margin-top:20px; justify-content:center; }
+    .vac-btn-row { display:flex; gap:10px; margin-top:14px; justify-content:center; }
     .vac-btn { font-family:'Cinzel',serif; font-size:9px; letter-spacing:2px; text-transform:uppercase; padding:8px 16px; border-radius:2px; cursor:pointer; border:1px solid; transition:background 0.2s; }
     .vac-btn.confirm { background:rgba(60,100,160,0.2); border-color:#4a7aaa; color:#80b8e8; }
     .vac-btn.confirm:hover { background:rgba(60,100,160,0.35); }
@@ -116,6 +132,10 @@
     .vac-btn.cancel:hover { background:rgba(160,120,48,0.2); }
     .vac-btn.end { background:rgba(160,50,50,0.15); border-color:#c84040; color:#f08080; }
     .vac-btn.end:hover { background:rgba(160,50,50,0.3); }
+    .sched-save-btn { width:100%; }
+    .sched-saved-note { font-size:8px; letter-spacing:2px; color:#60c080; text-transform:uppercase; margin-top:8px; height:10px; opacity:0; transition:opacity 0.3s; }
+    .sched-saved-note.show { opacity:1; }
+
     .vac-trigger { width:100%; background:none; border:none; border-top:1px solid rgba(160,120,48,0.2); padding:10px 24px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-family:'Cinzel',serif; font-size:8px; letter-spacing:3px; color:rgba(100,110,160,0.45); text-transform:uppercase; transition:background 0.2s,color 0.2s; }
     .vac-trigger:hover { background:rgba(60,100,200,0.06); color:#6688bb; }
     .footer { padding:10px 24px 12px; text-align:center; font-size:8px; letter-spacing:2px; color:rgba(100,110,160,0.4); text-transform:uppercase; cursor:default; }
@@ -181,32 +201,43 @@
     View Full Schedule <span class="toggle-arrow" id="arrow">▾</span>
   </button>
 
-  <div class="week" id="week">
-    <div class="day-row" id="row-0"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Sunday</span></div><span class="day-time no-raid-time">No Raid</span></div>
-    <div class="day-row" id="row-1"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Monday</span></div><span class="day-time no-raid-time">No Raid</span></div>
-    <div class="day-row" id="row-2"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Tuesday</span></div><span class="day-time raid-time">8:00 – 11:00 PM</span></div>
-    <div class="day-row" id="row-3"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Wednesday</span></div><span class="day-time raid-time">8:00 – 11:00 PM</span></div>
-    <div class="day-row" id="row-4"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Thursday</span></div><span class="day-time raid-time">8:00 – 11:00 PM</span></div>
-    <div class="day-row" id="row-5"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Friday</span></div><span class="day-time no-raid-time">No Raid</span></div>
-    <div class="day-row" id="row-6" style="border-bottom:none;"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Saturday</span></div><span class="day-time no-raid-time">No Raid</span></div>
-  </div>
+  <div class="week" id="week"></div>
 
-  <button class="vac-trigger" id="vac-trigger" style="display:none;" onclick="openVacModal()">⚓ Vacation Mode</button>
+  <button class="vac-trigger" id="vac-trigger" style="display:none;" onclick="openAdminModal()">⚓ Admin Panel</button>
   <div class="footer" id="footer-text">Gunbreaking Out</div>
 </div>
 
-<!-- Vacation Modal -->
-<div class="vac-overlay" id="vac-overlay">
+<!-- Admin Modal -->
+<div class="vac-overlay" id="admin-overlay">
   <div class="vac-modal">
-    <div class="vac-title">Vacation Mode</div>
-    <div class="vac-sub">Richard is taking a break from Eorzea</div>
+    <div class="vac-title">Admin Panel</div>
+    <div class="vac-sub">Manage raid schedule &amp; vacation</div>
+
+    <div class="admin-section-label">Raid Schedule (EST)</div>
+    <div class="sched-editor" id="sched-editor">
+      <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="0"><span>Sun</span></label><div class="sched-times"><input type="time" class="sched-time sched-start" data-day="0" value="20:00"><span class="sched-dash">–</span><input type="time" class="sched-time sched-end" data-day="0" value="23:00"></div></div>
+      <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="1"><span>Mon</span></label><div class="sched-times"><input type="time" class="sched-time sched-start" data-day="1" value="20:00"><span class="sched-dash">–</span><input type="time" class="sched-time sched-end" data-day="1" value="23:00"></div></div>
+      <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="2"><span>Tue</span></label><div class="sched-times"><input type="time" class="sched-time sched-start" data-day="2" value="20:00"><span class="sched-dash">–</span><input type="time" class="sched-time sched-end" data-day="2" value="23:00"></div></div>
+      <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="3"><span>Wed</span></label><div class="sched-times"><input type="time" class="sched-time sched-start" data-day="3" value="20:00"><span class="sched-dash">–</span><input type="time" class="sched-time sched-end" data-day="3" value="23:00"></div></div>
+      <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="4"><span>Thu</span></label><div class="sched-times"><input type="time" class="sched-time sched-start" data-day="4" value="20:00"><span class="sched-dash">–</span><input type="time" class="sched-time sched-end" data-day="4" value="23:00"></div></div>
+      <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="5"><span>Fri</span></label><div class="sched-times"><input type="time" class="sched-time sched-start" data-day="5" value="20:00"><span class="sched-dash">–</span><input type="time" class="sched-time sched-end" data-day="5" value="23:00"></div></div>
+      <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="6"><span>Sat</span></label><div class="sched-times"><input type="time" class="sched-time sched-start" data-day="6" value="20:00"><span class="sched-dash">–</span><input type="time" class="sched-time sched-end" data-day="6" value="23:00"></div></div>
+    </div>
+    <button class="vac-btn confirm sched-save-btn" onclick="saveSchedule()">Save Schedule</button>
+    <div class="sched-saved-note" id="sched-saved-note">Schedule saved ✓</div>
+
+    <div class="admin-divider"></div>
+
+    <div class="admin-section-label">Vacation Mode</div>
     <div class="vac-days-label">How many days?</div>
     <input class="vac-days-input" type="number" id="vac-days-input" min="1" max="365" value="7"/>
     <div class="vac-btn-row">
       <button class="vac-btn confirm" onclick="setVacation()">Activate</button>
       <button class="vac-btn end" id="end-vac-btn" onclick="endVacation()" style="display:none;">End Early</button>
-      <button class="vac-btn cancel" onclick="closeVacModal()">Cancel</button>
     </div>
+
+    <div class="admin-divider"></div>
+    <button class="vac-btn cancel" onclick="closeAdminModal()">Close</button>
   </div>
 </div>
 
@@ -227,32 +258,44 @@
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
-  const vacDoc = doc(db, 'settings', 'vacation');
+  const vacDoc   = doc(db, 'settings', 'vacation');
+  const schedDoc = doc(db, 'settings', 'schedule');
 
-  // Expose to global scope for button onclick handlers
-  window._db = db;
-  window._vacDoc = vacDoc;
-  window._setDoc = setDoc;
+  window._setDoc    = setDoc;
   window._deleteDoc = deleteDoc;
+  window._vacDoc    = vacDoc;
+  window._schedDoc  = schedDoc;
 
-  // Real-time listener — updates everyone the moment vacation state changes
+  // Vacation listener — syncs instantly across everyone
   onSnapshot(vacDoc, (snap) => {
-    if (snap.exists()) {
-      const data = snap.data();
-      window._vacEnd = data.endsAt || null;
+    window._vacEnd = (snap.exists() && snap.data().endsAt) ? snap.data().endsAt : null;
+    if (window.renderTick) window.renderTick();
+  });
+
+  // Schedule listener — syncs instantly across everyone
+  onSnapshot(schedDoc, (snap) => {
+    if (snap.exists() && Array.isArray(snap.data().raids) && snap.data().raids.length) {
+      window._schedule = snap.data().raids;
     } else {
-      window._vacEnd = null;
+      window._schedule = window._defaultRaids;
     }
-    renderTick();
+    if (window.renderWeek) window.renderWeek();
+    if (window.renderTick) window.renderTick();
   });
 </script>
 
 <script>
-  const raids = [
-    { day:2, startH:20, startM:0, endH:23, endM:0, label:'Tuesday' },
-    { day:3, startH:20, startM:0, endH:23, endM:0, label:'Wednesday' },
-    { day:4, startH:20, startM:0, endH:23, endM:0, label:'Thursday' },
+  // Default schedule (used until Firebase responds or if none set)
+  window._defaultRaids = [
+    { day:2, startH:20, startM:0, endH:23, endM:0 },
+    { day:3, startH:20, startM:0, endH:23, endM:0 },
+    { day:4, startH:20, startM:0, endH:23, endM:0 },
   ];
+  window._schedule = window._defaultRaids;
+  window._vacEnd = null;
+
+  const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
   const card      = document.getElementById('card');
   const badge     = document.getElementById('status-badge');
@@ -260,20 +303,20 @@
   const nextLabel = document.getElementById('next-label');
   const vacInfo   = document.getElementById('vac-info');
 
-  window._vacEnd = null;
-
   function pad(n) { return String(n).padStart(2,'0'); }
   function getEST(now) { return new Date(now.toLocaleString('en-US',{timeZone:'America/New_York'})); }
+  function getRaids() { return window._schedule || window._defaultRaids; }
+  function fmtTime(h, m) { return (h % 12 || 12) + ':' + pad(m) + ' ' + (h >= 12 ? 'PM' : 'AM'); }
 
   function getCurrentRaid(now) {
     const est=getEST(now), day=est.getDay(), mins=est.getHours()*60+est.getMinutes();
-    for (const r of raids) if (r.day===day&&mins>=r.startH*60+r.startM&&mins<r.endH*60+r.endM) return r;
+    for (const r of getRaids()) if (r.day===day && mins>=r.startH*60+r.startM && mins<r.endH*60+r.endM) return r;
     return null;
   }
-  function isRaidDay(now) { return raids.some(r=>r.day===getEST(now).getDay()); }
+  function isRaidDay(now) { return getRaids().some(r=>r.day===getEST(now).getDay()); }
   function getNextRaid(now) {
     const est=getEST(now); let best=null,bestDiff=Infinity;
-    for (const r of raids) for (let w=0;w<=1;w++) {
+    for (const r of getRaids()) for (let w=0;w<=1;w++) {
       const t=new Date(est);
       let d=(r.day-est.getDay()+7)%7+w*7;
       if(d===0&&est.getHours()*60+est.getMinutes()>=r.startH*60+r.startM) d=7;
@@ -284,37 +327,33 @@
     return best;
   }
 
+  // Build the weekly schedule rows from the current schedule
+  function renderWeek() {
+    const raids = getRaids();
+    const today = getEST(new Date()).getDay();
+    const weekEl = document.getElementById('week');
+    weekEl.innerHTML = '';
+    for (let i=0;i<=6;i++) {
+      const raid = raids.find(r=>r.day===i);
+      const row = document.createElement('div');
+      row.className = 'day-row' + (i===today ? ' today-row' : '');
+      if (i===6) row.style.borderBottom='none';
+      const dotClass  = raid ? 'dot-raid' : 'dot-noraid';
+      const timeClass = raid ? 'raid-time' : 'no-raid-time';
+      const timeText  = raid ? (fmtTime(raid.startH,raid.startM)+' – '+fmtTime(raid.endH,raid.endM)) : 'No Raid';
+      row.innerHTML = '<div class="day-left"><div class="day-dot '+dotClass+'"></div><span class="day-name">'+DAY_NAMES[i]+'</span></div><span class="day-time '+timeClass+'">'+timeText+'</span>';
+      weekEl.appendChild(row);
+    }
+  }
+  window.renderWeek = renderWeek;
+
   function isOnVacation() { return window._vacEnd && Date.now() < window._vacEnd; }
-
-  function openVacModal() {
-    document.getElementById('end-vac-btn').style.display = isOnVacation() ? 'inline-block' : 'none';
-    document.getElementById('vac-overlay').classList.add('open');
-  }
-  function closeVacModal() { document.getElementById('vac-overlay').classList.remove('open'); }
-
-  async function setVacation() {
-    const days = Math.max(1, parseInt(document.getElementById('vac-days-input').value) || 1);
-    const endsAt = Date.now() + days * 86400000;
-    await window._setDoc(window._vacDoc, { endsAt });
-    closeVacModal();
-  }
-  async function endVacation() {
-    await window._deleteDoc(window._vacDoc);
-    closeVacModal();
-  }
-
-  // Expose modal functions globally for onclick
-  window.openVacModal  = openVacModal;
-  window.closeVacModal = closeVacModal;
-  window.setVacation   = setVacation;
-  window.endVacation   = endVacation;
 
   function renderTick() {
     const now=new Date(), est=getEST(now);
 
     if (isOnVacation()) {
-      const diff = window._vacEnd - Date.now();
-      const ts   = Math.floor(diff/1000);
+      const ts = Math.floor((window._vacEnd - Date.now())/1000);
       const d=Math.floor(ts/86400), h=Math.floor((ts%86400)/3600), m=Math.floor((ts%3600)/60), s=ts%60;
       card.classList.remove('live'); card.classList.add('vacation');
       badge.textContent='On Vacation'; badge.className='status-badge vacation';
@@ -343,7 +382,7 @@
       document.getElementById('cd-hours').textContent=pad(Math.floor(ts/3600));
       document.getElementById('cd-mins').textContent=pad(Math.floor((ts%3600)/60));
       document.getElementById('cd-secs').textContent=pad(ts%60);
-      nextLabel.textContent=active.label+' raid ends at '+(active.endH%12||12)+':'+pad(active.endM)+' PM';
+      nextLabel.textContent=DAY_NAMES[active.day]+' raid ends at '+fmtTime(active.endH,active.endM);
     } else {
       badge.className=isRaidDay(now)?'status-badge raid-today':'status-badge no-raid';
       badge.textContent=isRaidDay(now)?'Raid Tonight!':'No Raid Today';
@@ -355,11 +394,14 @@
         document.getElementById('cd-hours').textContent=pad(Math.floor((ts%86400)/3600));
         document.getElementById('cd-mins').textContent=pad(Math.floor((ts%3600)/60));
         document.getElementById('cd-secs').textContent=pad(ts%60);
-        const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-        nextLabel.textContent=days[next.target.getDay()]+' at '+(next.startH%12||12)+':'+pad(next.startM)+' '+(next.startH>=12?'PM':'AM');
+        nextLabel.textContent=DAY_SHORT[next.target.getDay()]+' at '+fmtTime(next.startH,next.startM);
+      } else {
+        cdLabel.textContent='Next Raid'; nextLabel.textContent='No raids scheduled';
+        ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id=>document.getElementById(id).textContent='00');
       }
     }
   }
+  window.renderTick = renderTick;
 
   function toggleWeek() {
     document.getElementById('week').classList.toggle('open');
@@ -367,7 +409,78 @@
   }
   window.toggleWeek = toggleWeek;
 
-  // Secret footer trigger
+  /* ---------- Admin modal ---------- */
+  function toggleTimeInputs(day) {
+    const cb = document.querySelector('.sched-check[data-day="'+day+'"]');
+    const start = document.querySelector('.sched-start[data-day="'+day+'"]');
+    const end = document.querySelector('.sched-end[data-day="'+day+'"]');
+    start.disabled = !cb.checked;
+    end.disabled = !cb.checked;
+  }
+  function populateEditor() {
+    const raids = getRaids();
+    for (let i=0;i<=6;i++) {
+      const raid = raids.find(r=>r.day===i);
+      const cb = document.querySelector('.sched-check[data-day="'+i+'"]');
+      const start = document.querySelector('.sched-start[data-day="'+i+'"]');
+      const end = document.querySelector('.sched-end[data-day="'+i+'"]');
+      cb.checked = !!raid;
+      if (raid) {
+        start.value = pad(raid.startH)+':'+pad(raid.startM);
+        end.value   = pad(raid.endH)+':'+pad(raid.endM);
+      }
+      toggleTimeInputs(i);
+    }
+  }
+  function openAdminModal() {
+    populateEditor();
+    document.getElementById('end-vac-btn').style.display = isOnVacation() ? 'inline-block' : 'none';
+    document.getElementById('sched-saved-note').classList.remove('show');
+    document.getElementById('admin-overlay').classList.add('open');
+  }
+  function closeAdminModal() { document.getElementById('admin-overlay').classList.remove('open'); }
+
+  async function saveSchedule() {
+    const newRaids = [];
+    document.querySelectorAll('.sched-check').forEach(cb => {
+      if (cb.checked) {
+        const day = parseInt(cb.dataset.day);
+        const start = document.querySelector('.sched-start[data-day="'+day+'"]').value || '20:00';
+        const end   = document.querySelector('.sched-end[data-day="'+day+'"]').value || '23:00';
+        const [sh,sm] = start.split(':').map(Number);
+        const [eh,em] = end.split(':').map(Number);
+        newRaids.push({ day, startH:sh, startM:sm, endH:eh, endM:em });
+      }
+    });
+    try {
+      await window._setDoc(window._schedDoc, { raids: newRaids });
+      const note = document.getElementById('sched-saved-note');
+      note.classList.add('show');
+      setTimeout(()=>note.classList.remove('show'), 2500);
+    } catch(e) {
+      alert('Could not save schedule. Check your connection.');
+    }
+  }
+
+  async function setVacation() {
+    const days = Math.max(1, parseInt(document.getElementById('vac-days-input').value) || 1);
+    await window._setDoc(window._vacDoc, { endsAt: Date.now() + days * 86400000 });
+    closeAdminModal();
+  }
+  async function endVacation() { await window._deleteDoc(window._vacDoc); closeAdminModal(); }
+
+  window.openAdminModal  = openAdminModal;
+  window.closeAdminModal = closeAdminModal;
+  window.saveSchedule    = saveSchedule;
+  window.setVacation     = setVacation;
+  window.endVacation     = endVacation;
+
+  // Live enable/disable of time inputs
+  document.querySelectorAll('.sched-check').forEach(cb => {
+    cb.addEventListener('change', () => toggleTimeInputs(parseInt(cb.dataset.day)));
+  });
+
+  /* ---------- Secret footer trigger (15 clicks) ---------- */
   let footerClicks=0, footerTimer=null;
   document.getElementById('footer-text').addEventListener('click',()=>{
     footerClicks++;
@@ -375,13 +488,13 @@
     if(footerClicks>=15){
       footerClicks=0;
       document.getElementById('vac-trigger').style.display='block';
-      openVacModal();
+      openAdminModal();
     } else {
       footerTimer=setTimeout(()=>{footerClicks=0;},3000);
     }
   });
 
-  // UwU spawner
+  /* ---------- UwU spawner ---------- */
   const uwuContainer=document.getElementById('uwu-container');
   function spawnUwU(){
     const el=document.createElement('div'); el.className='uwu'; el.textContent='UwU';
@@ -390,7 +503,7 @@
   }
   setInterval(spawnUwU,2200); setTimeout(spawnUwU,800);
 
-  // Aether particles
+  /* ---------- Aether particles ---------- */
   const aetherContainer=document.getElementById('aether-container');
   const aetherColors=['rgba(140,100,255,VAL)','rgba(80,160,255,VAL)','rgba(160,220,255,VAL)','rgba(200,180,255,VAL)','rgba(100,200,220,VAL)','rgba(220,200,255,VAL)'];
   function spawnAether(){
@@ -404,12 +517,10 @@
   setInterval(spawnAether,400);
   for(let i=0;i<12;i++) setTimeout(spawnAether,i*200);
 
-  // Tick every second for countdown
+  /* ---------- Initial render + tick ---------- */
+  renderWeek();
+  renderTick();
   setInterval(renderTick, 1000);
-
-  // Highlight today
-  const today=getEST(new Date()).getDay();
-  for(let i=0;i<=6;i++) document.getElementById('row-'+i).classList.toggle('today-row',i===today);
 </script>
 </body>
 </html>
