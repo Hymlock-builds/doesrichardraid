@@ -155,20 +155,31 @@
       <div class="live-ring"></div>
       <div class="live-ring2"></div>
       <svg class="crystal-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g transform="rotate(-8,24,24)">
-          <rect x="6" y="6" width="36" height="36" rx="6" fill="#b8a030"/>
-          <rect x="6" y="6" width="36" height="36" rx="6" fill="url(#ss)"/>
-          <rect x="8" y="8" width="32" height="32" rx="5" fill="none" stroke="#e8d060" stroke-width="1.2" opacity="0.5"/>
-          <rect x="10" y="10" width="28" height="28" rx="4" fill="#9a8820" opacity="0.6"/>
-          <circle cx="24" cy="24" r="9" fill="none" stroke="#f0e040" stroke-width="2" opacity="0.9"/>
-          <line x1="17" y1="31" x2="31" y2="17" stroke="#f0e040" stroke-width="2.2" stroke-linecap="round" opacity="0.95"/>
-          <circle cx="24" cy="24" r="2" fill="#fff8a0" opacity="0.7"/>
-        </g>
+        <!-- Aether glow -->
+        <ellipse cx="24" cy="24" rx="20" ry="22" fill="url(#aetherGlow)"/>
+        <!-- Floating shards -->
+        <polygon points="8,20 10,23 8,26 6,23" fill="#7de3ff" opacity="0.55"/>
+        <polygon points="40,26 42,29 40,32 38,29" fill="#7de3ff" opacity="0.5"/>
+        <!-- Faceted crystal -->
+        <polygon points="24,4 13,16 24,24" fill="#6ad0f0"/>
+        <polygon points="24,4 35,16 24,24" fill="#3a9cd0"/>
+        <polygon points="13,16 13,32 24,24" fill="#4ab0e0"/>
+        <polygon points="35,16 35,32 24,24" fill="#2a78b8"/>
+        <polygon points="13,32 24,44 24,24" fill="#3690c8"/>
+        <polygon points="35,32 24,44 24,24" fill="#1e5c98"/>
+        <!-- Outline + facet lines -->
+        <polygon points="24,4 35,16 35,32 24,44 13,32 13,16" fill="none" stroke="#a8ecff" stroke-width="1" opacity="0.7"/>
+        <line x1="24" y1="4" x2="24" y2="44" stroke="#d8f6ff" stroke-width="0.8" opacity="0.6"/>
+        <line x1="13" y1="16" x2="35" y2="16" stroke="#a8ecff" stroke-width="0.5" opacity="0.4"/>
+        <line x1="13" y1="32" x2="35" y2="32" stroke="#a8ecff" stroke-width="0.5" opacity="0.4"/>
+        <!-- Glowing core -->
+        <circle cx="24" cy="24" r="3" fill="#eaffff" opacity="0.85"/>
+        <circle cx="24" cy="24" r="1.5" fill="#ffffff"/>
         <defs>
-          <radialGradient id="ss" cx="35%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="#e8d060" stop-opacity="0.3"/>
-            <stop offset="60%" stop-color="#b8a030" stop-opacity="0"/>
-            <stop offset="100%" stop-color="#504010" stop-opacity="0.5"/>
+          <radialGradient id="aetherGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#7de3ff" stop-opacity="0.35"/>
+            <stop offset="70%" stop-color="#4ab8e8" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#4ab8e8" stop-opacity="0"/>
           </radialGradient>
         </defs>
       </svg>
