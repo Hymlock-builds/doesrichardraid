@@ -182,12 +182,12 @@
   </button>
 
   <div class="week" id="week">
-    <div class="day-row" id="row-0"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Sunday</span></div><span class="day-time raid-time">7:30 – 11:30 PM</span></div>
+    <div class="day-row" id="row-0"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Sunday</span></div><span class="day-time no-raid-time">No Raid</span></div>
     <div class="day-row" id="row-1"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Monday</span></div><span class="day-time no-raid-time">No Raid</span></div>
-    <div class="day-row" id="row-2"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Tuesday</span></div><span class="day-time no-raid-time">No Raid</span></div>
-    <div class="day-row" id="row-3"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Wednesday</span></div><span class="day-time raid-time">9:00 – 11:00 PM</span></div>
-    <div class="day-row" id="row-4"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Thursday</span></div><span class="day-time no-raid-time">No Raid</span></div>
-    <div class="day-row" id="row-5"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Friday</span></div><span class="day-time raid-time">9:00 – 11:00 PM</span></div>
+    <div class="day-row" id="row-2"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Tuesday</span></div><span class="day-time raid-time">8:00 – 11:00 PM</span></div>
+    <div class="day-row" id="row-3"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Wednesday</span></div><span class="day-time raid-time">8:00 – 11:00 PM</span></div>
+    <div class="day-row" id="row-4"><div class="day-left"><div class="day-dot dot-raid"></div><span class="day-name">Thursday</span></div><span class="day-time raid-time">8:00 – 11:00 PM</span></div>
+    <div class="day-row" id="row-5"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Friday</span></div><span class="day-time no-raid-time">No Raid</span></div>
     <div class="day-row" id="row-6" style="border-bottom:none;"><div class="day-left"><div class="day-dot dot-noraid"></div><span class="day-name">Saturday</span></div><span class="day-time no-raid-time">No Raid</span></div>
   </div>
 
@@ -249,9 +249,9 @@
 
 <script>
   const raids = [
-    { day:0, startH:19, startM:30, endH:23, endM:30, label:'Sunday' },
-    { day:3, startH:21, startM:0,  endH:23, endM:0,  label:'Wednesday' },
-    { day:5, startH:21, startM:0,  endH:23, endM:0,  label:'Friday' },
+    { day:2, startH:20, startM:0, endH:23, endM:0, label:'Tuesday' },
+    { day:3, startH:20, startM:0, endH:23, endM:0, label:'Wednesday' },
+    { day:4, startH:20, startM:0, endH:23, endM:0, label:'Thursday' },
   ];
 
   const card      = document.getElementById('card');
