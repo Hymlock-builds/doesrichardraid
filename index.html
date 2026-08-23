@@ -362,7 +362,74 @@
       line-height: 1.75;
     }
 
-    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(330px, .8fr); }
+    .details-toggle {
+      width: 100%;
+      min-height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 13px;
+      padding: 12px clamp(24px, 6vw, 72px);
+      border: 0;
+      border-bottom: 1px solid rgb(var(--gold-rgb) / 15%);
+      color: var(--gold-bright);
+      background:
+        linear-gradient(90deg, transparent, rgb(var(--state-rgb) / 5%) 50%, transparent),
+        rgb(0 0 0 / 12%);
+      cursor: pointer;
+      font: 600 10px/1.3 var(--font-ui);
+      letter-spacing: .19em;
+      text-transform: uppercase;
+      transition: color .25s ease, background .25s ease;
+    }
+
+    .details-toggle:hover {
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, transparent, rgb(var(--state-rgb) / 10%) 50%, transparent),
+        rgb(0 0 0 / 16%);
+    }
+
+    .details-toggle:focus-visible { outline-offset: -4px; }
+
+    .details-toggle-arrow {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 26px;
+      border: 1px solid rgb(var(--state-rgb) / 42%);
+      border-radius: 50%;
+      color: var(--state);
+      background: rgb(var(--state-rgb) / 7%);
+      font-size: 16px;
+      line-height: 1;
+      transition: transform .4s ease, border-color .25s ease, background .25s ease;
+    }
+
+    .details-toggle[aria-expanded='true'] .details-toggle-arrow { transform: rotate(180deg); }
+
+    .details-reveal {
+      display: grid;
+      grid-template-rows: 0fr;
+      visibility: hidden;
+      opacity: 0;
+      transition: grid-template-rows .48s cubic-bezier(.22, 1, .36, 1), opacity .28s ease, visibility 0s linear .48s;
+    }
+
+    .details-reveal.is-open {
+      grid-template-rows: 1fr;
+      visibility: visible;
+      opacity: 1;
+      transition-delay: 0s;
+    }
+
+    .dashboard-grid {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(330px, .8fr);
+      overflow: hidden;
+    }
 
     .status-panel { padding: clamp(28px, 5vw, 58px) clamp(24px, 6vw, 72px) clamp(34px, 5vw, 58px); }
 
@@ -762,6 +829,7 @@
       body { place-items: start center; background-attachment: scroll; }
       .card { border-radius: 12px; }
       .header { padding-inline: 22px; }
+      .details-toggle { padding-inline: 22px; }
       .dashboard-grid { grid-template-columns: 1fr; }
       .status-panel { padding-inline: 22px; }
       .schedule-panel { padding: 28px 22px 32px; border-top: 1px solid rgb(var(--gold-rgb) / 18%); border-left: 0; }
@@ -847,8 +915,14 @@
     </div>
   </header>
 
-  <div class="dashboard-grid">
-    <section class="status-panel" aria-label="Current raid status">
+  <button class="details-toggle" id="details-toggle" type="button" aria-expanded="false" aria-controls="duty-details">
+    <span id="details-toggle-label">Reveal Duty Details</span>
+    <span class="details-toggle-arrow" aria-hidden="true">⌄</span>
+  </button>
+
+  <div class="details-reveal" id="duty-details" aria-hidden="true" inert>
+    <div class="dashboard-grid">
+      <section class="status-panel" aria-label="Current raid status">
       <div class="status-heading">
         <div class="current-duty-heading">
           <div class="section-kicker">Current Duty</div>
@@ -877,9 +951,9 @@
         <div class="next-raid-label" id="next-label">Reading the stars…</div>
         <div class="tz-label">All times Eastern Time (ET)</div>
       </div>
-    </section>
+      </section>
 
-    <section class="schedule-panel" aria-labelledby="schedule-heading">
+      <section class="schedule-panel" aria-labelledby="schedule-heading">
       <div class="panel-heading">
         <div>
           <div class="section-kicker">Weekly constellation</div>
@@ -897,7 +971,8 @@
         <span><i class="legend-glyph raid" aria-hidden="true"></i> Raid duty</span>
         <span><i class="legend-glyph" aria-hidden="true"></i> Rest day</span>
       </div>
-    </section>
+      </section>
+    </div>
   </div>
 
   <audio id="aether-audio" loop preload="metadata" aria-hidden="true">
@@ -1347,6 +1422,9 @@
   const audioVolume = document.getElementById('audio-volume');
   const audioVolumeValue = document.getElementById('audio-volume-value');
   const audioStatus = document.getElementById('audio-status');
+  const detailsToggle = document.getElementById('details-toggle');
+  const detailsToggleLabel = document.getElementById('details-toggle-label');
+  const detailsPanel = document.getElementById('duty-details');
   const AUDIO_PREFS_KEY = 'doesRichardRaid.audio.v1';
 
   function clampAudioVolume(value) {
@@ -1466,6 +1544,19 @@
   aetherAudio.addEventListener('pause',()=>updateAudioControls());
   aetherAudio.addEventListener('volumechange',()=>updateAudioControls());
   aetherAudio.addEventListener('error',markAudioUnavailable);
+
+  detailsToggle.addEventListener('click',()=>{
+    const willExpand = detailsToggle.getAttribute('aria-expanded') !== 'true';
+    detailsToggle.setAttribute('aria-expanded',String(willExpand));
+    detailsPanel.setAttribute('aria-hidden',String(!willExpand));
+    detailsPanel.inert = !willExpand;
+    detailsPanel.classList.toggle('is-open',willExpand);
+    detailsToggleLabel.textContent = willExpand ? 'Hide Duty Details' : 'Reveal Duty Details';
+
+    if (willExpand && !audioUnavailable && audioPreferences.playing && aetherAudio.paused) {
+      requestAudioPlayback(true);
+    }
+  });
 
   if (audioPreferences.playing) requestAudioPlayback();
 
