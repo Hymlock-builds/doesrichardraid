@@ -629,6 +629,8 @@
       flex-wrap: wrap;
       gap: 20px;
       min-height: 58px;
+      position: relative;
+      z-index: 7;
       padding: 14px clamp(24px, 6vw, 72px) 14px 88px;
       border-top: 1px solid rgb(var(--gold-rgb) / 15%);
       background: rgb(0 0 0 / 13%);
@@ -650,25 +652,124 @@
     .sync-state::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--aether); box-shadow: 0 0 8px rgb(117 220 232 / 55%); }
     .sync-state.is-offline::before { background: var(--danger); box-shadow: 0 0 8px rgb(255 118 110 / 55%); }
 
+    .audio-dock {
+      display: grid;
+      place-items: center;
+      position: relative;
+      z-index: 9;
+    }
+
+    .audio-dock-toggle {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      border: 1px solid rgb(var(--gold-rgb) / 32%);
+      border-radius: 50%;
+      color: var(--aether);
+      background:
+        radial-gradient(circle, rgb(117 220 232 / 14%), transparent 58%),
+        linear-gradient(145deg, rgb(17 31 46 / 98%), rgb(5 10 18 / 98%));
+      box-shadow: inset 0 1px rgb(255 255 255 / 7%), 0 8px 24px rgb(0 0 0 / 28%);
+      cursor: pointer;
+      transition: color .25s ease, border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+    }
+
+    .audio-dock-toggle::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgb(117 220 232 / 20%);
+      border-top-color: rgb(117 220 232 / 70%);
+      border-radius: 50%;
+    }
+
+    .audio-dock-toggle::after {
+      content: '';
+      width: 5px;
+      height: 5px;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      border-radius: 50%;
+      background: var(--dim);
+      box-shadow: 0 0 7px currentColor;
+    }
+
+    .audio-dock-toggle:hover,
+    .audio-dock.is-open .audio-dock-toggle {
+      color: #d9fbff;
+      border-color: rgb(117 220 232 / 52%);
+      box-shadow: inset 0 1px rgb(255 255 255 / 9%), 0 0 22px rgb(117 220 232 / 14%);
+      transform: translateY(-1px);
+    }
+
+    .audio-dock-toggle.is-playing::before { animation: audioOrbit 3s linear infinite; }
+    .audio-dock-toggle.is-playing::after { color: var(--aether); background: var(--aether); }
+    .audio-dock-toggle.is-muted { color: var(--dim); }
+    .audio-dock-toggle.is-unavailable { opacity: .55; }
+    .audio-dock-icon { position: relative; z-index: 1; font-size: 16px; line-height: 1; }
+
+    @keyframes audioOrbit { to { transform: rotate(360deg); } }
+
     .audio-controls {
       display: flex;
       align-items: center;
       gap: 8px;
+      width: max-content;
+      max-width: calc(100vw - 40px);
       min-height: 48px;
+      position: absolute;
+      right: 0;
+      bottom: calc(100% + 12px);
+      z-index: 2;
       padding: 3px 9px 3px 13px;
       border: 1px solid rgb(var(--gold-rgb) / 24%);
       border-radius: 999px;
-      background: linear-gradient(135deg, rgb(117 220 232 / 7%), rgb(4 8 14 / 34%));
-      box-shadow: inset 0 1px rgb(255 255 255 / 4%);
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgb(18 31 46 / 98%), rgb(5 10 18 / 98%));
+      box-shadow: inset 0 1px rgb(255 255 255 / 6%), 0 18px 48px rgb(0 0 0 / 48%), 0 0 28px rgb(117 220 232 / 8%);
+      transform: translateY(8px) scale(.97);
+      transform-origin: bottom right;
+      transition: visibility 0s linear .24s, opacity .2s ease, transform .3s cubic-bezier(.22, 1, .36, 1);
+      backdrop-filter: blur(18px);
+    }
+
+    .audio-controls::after {
+      content: '';
+      width: 9px;
+      height: 9px;
+      position: absolute;
+      right: 18px;
+      bottom: -5px;
+      border-right: 1px solid rgb(var(--gold-rgb) / 24%);
+      border-bottom: 1px solid rgb(var(--gold-rgb) / 24%);
+      background: #080f1a;
+      transform: rotate(45deg);
+    }
+
+    .audio-dock.is-open .audio-controls {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      transition-delay: 0s;
     }
 
     .audio-title {
+      display: grid;
+      gap: 2px;
       color: var(--dim);
       font-size: 9px;
       font-weight: 700;
       letter-spacing: .13em;
       text-transform: uppercase;
     }
+
+    .audio-title small { color: var(--muted); font-size: 8px; font-weight: 500; letter-spacing: .06em; white-space: nowrap; }
 
     .audio-button {
       width: 44px;
@@ -864,7 +965,7 @@
       .day-row { grid-template-columns: 1fr; gap: 4px; }
       .day-time { padding-left: 0; }
       .footer-bar { align-items: flex-end; flex-direction: column; gap: 10px; }
-      .audio-controls { width: 100%; max-width: 198px; padding-inline: 8px; gap: 7px; }
+      .audio-controls { width: min(198px, calc(100vw - 122px)); max-width: none; padding-inline: 8px; gap: 7px; }
       .audio-title, .audio-output { display: none; }
       .audio-volume { width: auto; min-width: 0; flex: 1 1 70px; }
       .vac-trigger { margin-left: 0; }
@@ -987,17 +1088,22 @@
   <footer class="footer-bar">
     <div class="corner-trigger" id="footer-text" aria-hidden="true"></div>
     <div class="sync-state" id="sync-state" role="status">Connecting to aether…</div>
-    <div class="audio-controls" role="group" aria-label="Background music controls">
-      <span class="audio-title">Ambience</span>
-      <button class="audio-button" id="audio-play" type="button" aria-label="Play background music" title="Play background music">
-        <span class="audio-play-icon" id="audio-play-icon" aria-hidden="true">▶</span>
+    <div class="audio-dock" id="audio-dock">
+      <button class="audio-dock-toggle" id="audio-dock-toggle" type="button" aria-expanded="false" aria-controls="audio-controls" aria-label="Open background music controls" title="Open background music controls">
+        <span class="audio-dock-icon" id="audio-dock-icon" aria-hidden="true">♫</span>
       </button>
-      <button class="audio-button" id="audio-mute" type="button" aria-label="Mute background music" title="Mute background music">
-        <span id="audio-mute-icon" aria-hidden="true">♫</span>
-      </button>
-      <label class="sr-only" for="audio-volume">Background music volume</label>
-      <input class="audio-volume" id="audio-volume" type="range" min="0" max="100" step="1" value="25" />
-      <output class="audio-output" id="audio-volume-value" for="audio-volume">25%</output>
+      <div class="audio-controls" id="audio-controls" role="group" aria-label="Background music controls" aria-hidden="true" inert>
+        <span class="audio-title"><span>Ambience</span><small>Aether Loop</small></span>
+        <button class="audio-button" id="audio-play" type="button" aria-label="Play background music" title="Play background music">
+          <span class="audio-play-icon" id="audio-play-icon" aria-hidden="true">▶</span>
+        </button>
+        <button class="audio-button" id="audio-mute" type="button" aria-label="Mute background music" title="Mute background music">
+          <span id="audio-mute-icon" aria-hidden="true">♫</span>
+        </button>
+        <label class="sr-only" for="audio-volume">Background music volume</label>
+        <input class="audio-volume" id="audio-volume" type="range" min="0" max="100" step="1" value="25" />
+        <output class="audio-output" id="audio-volume-value" for="audio-volume">25%</output>
+      </div>
       <span class="sr-only" id="audio-status" role="status" aria-live="polite"></span>
     </div>
     <button class="vac-trigger" id="vac-trigger" type="button" style="display:none;" onclick="openAdminModal()">Open Admin Panel</button>
@@ -1426,6 +1532,10 @@
   const audioVolume = document.getElementById('audio-volume');
   const audioVolumeValue = document.getElementById('audio-volume-value');
   const audioStatus = document.getElementById('audio-status');
+  const audioDock = document.getElementById('audio-dock');
+  const audioDockToggle = document.getElementById('audio-dock-toggle');
+  const audioDockIcon = document.getElementById('audio-dock-icon');
+  const audioControlsPanel = document.getElementById('audio-controls');
   const detailsToggle = document.getElementById('details-toggle');
   const detailsPanel = document.getElementById('duty-details');
   const AUDIO_PREFS_KEY = 'doesRichardRaid.audio.v1';
@@ -1452,6 +1562,35 @@
 
   let audioPreferences = readAudioPreferences();
   let audioUnavailable = false;
+  let audioDockPinned = false;
+  let audioDockPointerInside = false;
+  let audioDockFocusInside = false;
+  let audioDockPreviewSuppressed = false;
+  let audioDockCloseTimer = null;
+  const audioDockCanHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+  function setAudioDockOpen(open) {
+    audioDock.classList.toggle('is-open',open);
+    audioDockToggle.setAttribute('aria-expanded',String(open));
+    audioControlsPanel.setAttribute('aria-hidden',String(!open));
+    audioControlsPanel.inert = !open;
+    const label = open
+      ? (audioDockPinned ? 'Close background music controls' : 'Keep background music controls open')
+      : 'Open background music controls';
+    audioDockToggle.setAttribute('aria-label',label);
+    audioDockToggle.title = label;
+  }
+
+  function syncAudioDock() {
+    const previewOpen = !audioDockPreviewSuppressed && (
+      audioDockFocusInside || (audioDockCanHover.matches && audioDockPointerInside)
+    );
+    setAudioDockOpen(audioDockPinned || previewOpen);
+  }
+
+  function resetAudioDockPreviewIfOutside() {
+    if (!audioDockPointerInside && !audioDockFocusInside) audioDockPreviewSuppressed = false;
+  }
 
   function saveAudioPreferences() {
     try { localStorage.setItem(AUDIO_PREFS_KEY,JSON.stringify(audioPreferences)); } catch(e) {}
@@ -1479,6 +1618,10 @@
     audioVolume.value = String(percent);
     audioVolume.setAttribute('aria-valuetext',percent+' percent');
     audioVolumeValue.textContent = percent+'%';
+    audioDockToggle.classList.toggle('is-playing',!audioUnavailable&&isPlaying&&!isMuted&&percent>0);
+    audioDockToggle.classList.toggle('is-muted',isMuted||percent===0);
+    audioDockToggle.classList.toggle('is-unavailable',audioUnavailable);
+    audioDockIcon.textContent = audioUnavailable ? '—' : (isMuted||percent===0 ? '×' : (isPlaying ? '♫' : '▶'));
     if (message) audioStatus.textContent = message;
   }
 
@@ -1547,6 +1690,61 @@
   aetherAudio.addEventListener('pause',()=>updateAudioControls());
   aetherAudio.addEventListener('volumechange',()=>updateAudioControls());
   aetherAudio.addEventListener('error',markAudioUnavailable);
+
+  audioDockToggle.addEventListener('click',()=>{
+    if (audioDockPinned) {
+      audioDockPinned = false;
+      audioDockPreviewSuppressed = true;
+    } else {
+      audioDockPinned = true;
+      audioDockPreviewSuppressed = false;
+    }
+    syncAudioDock();
+  });
+
+  audioDock.addEventListener('pointerenter',()=>{
+    clearTimeout(audioDockCloseTimer);
+    audioDockPointerInside = true;
+    syncAudioDock();
+  });
+
+  audioDock.addEventListener('pointerleave',()=>{
+    audioDockPointerInside = false;
+    clearTimeout(audioDockCloseTimer);
+    audioDockCloseTimer = setTimeout(()=>{
+      resetAudioDockPreviewIfOutside();
+      syncAudioDock();
+    },140);
+  });
+
+  audioDock.addEventListener('focusin',()=>{
+    audioDockFocusInside = true;
+    syncAudioDock();
+  });
+
+  audioDock.addEventListener('focusout',()=>{
+    queueMicrotask(()=>{
+      audioDockFocusInside = audioDock.contains(document.activeElement);
+      resetAudioDockPreviewIfOutside();
+      syncAudioDock();
+    });
+  });
+
+  document.addEventListener('pointerdown',event=>{
+    if (!audioDockPinned || audioDock.contains(event.target)) return;
+    audioDockPinned = false;
+    audioDockPreviewSuppressed = true;
+    syncAudioDock();
+  });
+
+  document.addEventListener('keydown',event=>{
+    if (event.defaultPrevented || event.key !== 'Escape' || !audioDock.classList.contains('is-open')) return;
+    event.preventDefault();
+    audioDockPinned = false;
+    audioDockPreviewSuppressed = true;
+    audioDockToggle.focus();
+    syncAudioDock();
+  });
 
   detailsToggle.addEventListener('click',()=>{
     requestAudioPlayback(true);
