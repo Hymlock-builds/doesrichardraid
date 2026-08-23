@@ -391,6 +391,7 @@
     }
 
     .details-toggle:focus-visible { outline-offset: -4px; }
+    .details-toggle[hidden] { display: none; }
 
     .details-toggle-arrow {
       width: 26px;
@@ -407,8 +408,6 @@
       transition: transform .4s ease, border-color .25s ease, background .25s ease;
     }
 
-    .details-toggle[aria-expanded='true'] .details-toggle-arrow { transform: rotate(180deg); }
-
     .details-reveal {
       display: grid;
       grid-template-rows: 0fr;
@@ -422,6 +421,11 @@
       visibility: visible;
       opacity: 1;
       transition-delay: 0s;
+    }
+
+    .details-reveal:focus-visible {
+      outline: 2px solid var(--aether);
+      outline-offset: -4px;
     }
 
     .dashboard-grid {
@@ -916,11 +920,11 @@
   </header>
 
   <button class="details-toggle" id="details-toggle" type="button" aria-expanded="false" aria-controls="duty-details">
-    <span id="details-toggle-label">Reveal Duty Details</span>
+    <span>Find Out</span>
     <span class="details-toggle-arrow" aria-hidden="true">⌄</span>
   </button>
 
-  <div class="details-reveal" id="duty-details" aria-hidden="true" inert>
+  <div class="details-reveal" id="duty-details" role="region" aria-label="Duty details" aria-hidden="true" tabindex="-1" inert>
     <div class="dashboard-grid">
       <section class="status-panel" aria-label="Current raid status">
       <div class="status-heading">
@@ -1423,7 +1427,6 @@
   const audioVolumeValue = document.getElementById('audio-volume-value');
   const audioStatus = document.getElementById('audio-status');
   const detailsToggle = document.getElementById('details-toggle');
-  const detailsToggleLabel = document.getElementById('details-toggle-label');
   const detailsPanel = document.getElementById('duty-details');
   const AUDIO_PREFS_KEY = 'doesRichardRaid.audio.v1';
 
@@ -1546,16 +1549,14 @@
   aetherAudio.addEventListener('error',markAudioUnavailable);
 
   detailsToggle.addEventListener('click',()=>{
-    const willExpand = detailsToggle.getAttribute('aria-expanded') !== 'true';
-    detailsToggle.setAttribute('aria-expanded',String(willExpand));
-    detailsPanel.setAttribute('aria-hidden',String(!willExpand));
-    detailsPanel.inert = !willExpand;
-    detailsPanel.classList.toggle('is-open',willExpand);
-    detailsToggleLabel.textContent = willExpand ? 'Hide Duty Details' : 'Reveal Duty Details';
+    requestAudioPlayback(true);
 
-    if (willExpand && !audioUnavailable && audioPreferences.playing && aetherAudio.paused) {
-      requestAudioPlayback(true);
-    }
+    detailsToggle.setAttribute('aria-expanded','true');
+    detailsPanel.setAttribute('aria-hidden','false');
+    detailsPanel.inert = false;
+    detailsPanel.classList.add('is-open');
+    detailsPanel.focus({preventScroll:true});
+    detailsToggle.hidden = true;
   });
 
   if (audioPreferences.playing) requestAudioPlayback();
