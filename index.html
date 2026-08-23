@@ -151,6 +151,7 @@
     .card[data-state='live'], .card.live { --state: #ff766e; --state-rgb: 255 118 110; }
     .card[data-state='tonight'] { --state: #e5c067; --state-rgb: 229 192 103; }
     .card[data-state='vacation'], .card.vacation { --state: #8eb9ef; --state-rgb: 142 185 239; }
+    .card[data-state='inactive'] { --state: #b89bf2; --state-rgb: 184 155 242; }
 
     .card.live {
       border-color: rgb(var(--state-rgb) / 65%);
@@ -353,7 +354,18 @@
 
     .status-panel { padding: clamp(28px, 5vw, 58px) clamp(24px, 6vw, 72px) clamp(34px, 5vw, 58px); }
 
-    .status-heading { justify-content: space-between; gap: 18px; margin-bottom: 28px; }
+    .status-heading { align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 28px; }
+
+    .current-duty-heading { min-width: 0; }
+
+    .duty-name {
+      margin-top: 7px;
+      max-width: 34ch;
+      color: var(--gold-bright);
+      font: 500 clamp(13px, 1.8vw, 16px)/1.45 var(--font-display);
+      letter-spacing: .04em;
+      overflow-wrap: anywhere;
+    }
 
     .section-kicker,
     .status-context,
@@ -387,6 +399,7 @@
     .status-badge.raid,
     .status-badge.raid-today,
     .status-badge.no-raid,
+    .status-badge.no-active,
     .status-badge.vacation { color: var(--state); border-color: rgb(var(--state-rgb) / 52%); background: linear-gradient(110deg, rgb(var(--state-rgb) / 16%), transparent); }
 
     .vacation-info { margin-top: 10px; color: #a8c8ef; font-size: 12px; letter-spacing: .08em; }
@@ -627,6 +640,9 @@
     .admin-section-label { margin-bottom: 16px; color: var(--gold); font: 600 11px/1.3 var(--font-display); letter-spacing: .13em; text-transform: uppercase; }
     .admin-divider { height: 1px; margin: 20px 0; background: rgb(var(--gold-rgb) / 15%); }
 
+    .duty-name-field { margin-bottom: 20px; }
+    .duty-name-label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+
     .sched-editor { margin-bottom: 18px; }
     .sched-row { display: grid; grid-template-columns: 74px 1fr; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid rgb(255 255 255 / 4%); }
     .sched-day { display: flex; align-items: center; gap: 9px; color: var(--muted); font: 600 11px/1 var(--font-display); cursor: pointer; user-select: none; }
@@ -635,6 +651,7 @@
     .sched-dash { color: var(--dim); }
 
     .sched-time,
+    .duty-name-input,
     .vac-days-input {
       min-height: 38px;
       border: 1px solid rgb(117 220 232 / 24%);
@@ -646,6 +663,9 @@
     .sched-time { width: 94px; padding: 5px 7px; font-size: 11px; color-scheme: dark; }
     .sched-time:disabled { opacity: .28; cursor: not-allowed; }
     .sched-time::-webkit-calendar-picker-indicator { filter: invert(.8); }
+
+    .duty-name-input { width: 100%; min-height: 44px; padding: 8px 10px; font-size: 12px; }
+    .duty-name-input::placeholder { color: var(--dim); }
 
     .vac-days-label { margin-bottom: 11px; color: var(--muted); font-size: 12px; line-height: 1.6; }
     .vac-days-input { width: 100%; padding: 8px 10px; font-size: 20px; text-align: center; }
@@ -703,8 +723,8 @@
       .cd-num { min-height: 64px; border-radius: 6px; font-size: clamp(1.75rem, 11vw, 2.5rem); }
       #cd-days { font-size: clamp(1.35rem, 8.5vw, 2.15rem); letter-spacing: -.04em; }
       .cd-unit { font-size: 8px; letter-spacing: .1em; }
-      .status-heading { align-items: flex-start; }
-      .signal-mark { font-size: 8px; }
+      .status-heading { align-items: flex-start; flex-direction: column; gap: 12px; }
+      .signal-mark { flex: 0 0 auto; font-size: 8px; }
       .day-row { grid-template-columns: 1fr; gap: 4px; }
       .day-time { padding-left: 0; }
       .footer-bar { align-items: flex-end; flex-direction: column; gap: 10px; }
@@ -714,6 +734,7 @@
       .modal-header > div { min-width: 0; }
       .vac-title { overflow-wrap: anywhere; font-size: clamp(17px, 6vw, 24px); }
       .vac-sub { font-size: 9px; letter-spacing: .08em; }
+      .duty-name-input { font-size: 16px; }
       .sched-row { grid-template-columns: 1fr; gap: 8px; padding-block: 10px; }
       .sched-times { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); width: 100%; justify-content: stretch; }
       .sched-time { width: 100%; min-width: 0; }
@@ -753,16 +774,19 @@
       </div>
     </div>
     <div class="hero-copy">
-      <div class="chapter-line">Duty forecast · Chapter XIV</div>
+      <div class="chapter-line">Duty forecast · Final Fantasy</div>
       <h1 class="question">Does Richard <span>Raid?</span></h1>
-      <p class="lede">A live reading of the static's weekly duty schedule, drawn from the aether and rendered in Eastern Time.</p>
+      <p class="lede">A live reading of the static's weekly duty schedule, drawn from the aether.</p>
     </div>
   </header>
 
   <div class="dashboard-grid">
     <section class="status-panel" aria-label="Current raid status">
       <div class="status-heading">
-        <div class="section-kicker">Current reading</div>
+        <div class="current-duty-heading">
+          <div class="section-kicker">Current Duty</div>
+          <div class="duty-name" id="duty-name" hidden></div>
+        </div>
         <div class="signal-mark">Crystal synchronized</div>
       </div>
 
@@ -830,6 +854,10 @@
     <div class="modal-grid">
       <section class="admin-pane" aria-labelledby="schedule-admin-heading">
         <h3 class="admin-section-label" id="schedule-admin-heading">Raid Schedule · Eastern Time</h3>
+        <div class="duty-name-field">
+          <label class="duty-name-label" for="duty-name-input">Raid tier name <span aria-hidden="true">·</span> optional</label>
+          <input class="duty-name-input" type="text" id="duty-name-input" maxlength="60" autocomplete="off" placeholder="e.g. AAC Heavyweight (Savage)" />
+        </div>
         <div class="sched-editor" id="sched-editor">
           <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="0"><span>Sun</span></label><div class="sched-times"><input aria-label="Sunday raid start" type="time" class="sched-time sched-start" data-day="0" value="20:00"><span class="sched-dash">–</span><input aria-label="Sunday raid end" type="time" class="sched-time sched-end" data-day="0" value="23:00"></div></div>
           <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="1"><span>Mon</span></label><div class="sched-times"><input aria-label="Monday raid start" type="time" class="sched-time sched-start" data-day="1" value="20:00"><span class="sched-dash">–</span><input aria-label="Monday raid end" type="time" class="sched-time sched-end" data-day="1" value="23:00"></div></div>
@@ -839,8 +867,8 @@
           <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="5"><span>Fri</span></label><div class="sched-times"><input aria-label="Friday raid start" type="time" class="sched-time sched-start" data-day="5" value="20:00"><span class="sched-dash">–</span><input aria-label="Friday raid end" type="time" class="sched-time sched-end" data-day="5" value="23:00"></div></div>
           <div class="sched-row"><label class="sched-day"><input type="checkbox" class="sched-check" data-day="6"><span>Sat</span></label><div class="sched-times"><input aria-label="Saturday raid start" type="time" class="sched-time sched-start" data-day="6" value="20:00"><span class="sched-dash">–</span><input aria-label="Saturday raid end" type="time" class="sched-time sched-end" data-day="6" value="23:00"></div></div>
         </div>
-        <button class="vac-btn confirm sched-save-btn" type="button" onclick="saveSchedule()">Save Schedule</button>
-        <div class="sched-saved-note" id="sched-saved-note" role="status">Schedule saved ✓</div>
+        <button class="vac-btn confirm sched-save-btn" type="button" onclick="saveSchedule()">Save Duty Settings</button>
+        <div class="sched-saved-note" id="sched-saved-note" role="status">Duty settings saved ✓</div>
       </section>
 
       <section class="admin-pane" aria-labelledby="vacation-admin-heading">
@@ -909,10 +937,13 @@
   onSnapshot(schedDoc, (snap) => {
     if (snap.exists() && Array.isArray(snap.data().raids)) {
       window._schedule = snap.data().raids;
+      window._dutyName = typeof snap.data().dutyName === 'string' ? snap.data().dutyName.trim().slice(0,60) : '';
     } else {
       window._schedule = window._defaultRaids;
+      window._dutyName = '';
     }
     if (window.renderWeek) window.renderWeek();
+    if (window.renderDutyName) window.renderDutyName();
     if (window.renderTick) window.renderTick();
     markSynced('schedule');
   }, markOffline);
@@ -926,6 +957,7 @@
     { day:4, startH:20, startM:0, endH:23, endM:0 },
   ];
   window._schedule = window._defaultRaids;
+  window._dutyName = '';
   window._vacEnd = null;
 
   const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -946,6 +978,18 @@
     if (badge.textContent !== text) badge.textContent = text;
     if (badge.className !== className) badge.className = className;
   }
+
+  function normalizeDutyName(value) {
+    return String(value || '').trim().replace(/\s+/g,' ').slice(0,60);
+  }
+
+  function renderDutyName() {
+    const dutyName = document.getElementById('duty-name');
+    const value = normalizeDutyName(window._dutyName);
+    dutyName.textContent = value;
+    dutyName.hidden = !value;
+  }
+  window.renderDutyName = renderDutyName;
 
   function pad(n) { return String(n).padStart(2,'0'); }
   function getEST(now) { return new Date(now.toLocaleString('en-US',{timeZone:'America/New_York'})); }
@@ -1021,6 +1065,18 @@
       return;
     }
 
+    if (!getRaids().length) {
+      card.classList.remove('live','vacation');
+      card.dataset.state='inactive';
+      setStatusBadge('No Active Duty','status-badge no-active');
+      vacInfo.style.display='none';
+      cdLabel.textContent='Next Raid';
+      ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id=>document.getElementById(id).textContent='00');
+      nextLabel.textContent='No raid days are currently selected';
+      countdown.setAttribute('aria-label','No active duty is scheduled');
+      return;
+    }
+
     card.classList.remove('vacation');
     vacInfo.style.display='none';
     const active=getCurrentRaid(now);
@@ -1079,6 +1135,7 @@
   }
   function populateEditor() {
     const raids = getRaids();
+    document.getElementById('duty-name-input').value = normalizeDutyName(window._dutyName);
     for (let i=0;i<=6;i++) {
       const raid = raids.find(r=>r.day===i);
       const cb = document.querySelector('.sched-check[data-day="'+i+'"]');
@@ -1111,6 +1168,7 @@
 
   async function saveSchedule() {
     const newRaids = [];
+    const dutyName = normalizeDutyName(document.getElementById('duty-name-input').value);
     document.querySelectorAll('.sched-check').forEach(cb => {
       if (cb.checked) {
         const day = parseInt(cb.dataset.day);
@@ -1122,12 +1180,12 @@
       }
     });
     try {
-      await window._setDoc(window._schedDoc, { raids: newRaids });
+      await window._setDoc(window._schedDoc, { raids: newRaids, dutyName });
       const note = document.getElementById('sched-saved-note');
       note.classList.add('show');
       setTimeout(()=>note.classList.remove('show'), 2500);
     } catch(e) {
-      alert('Could not save schedule. Check your connection.');
+      alert('Could not save duty settings. Check your connection.');
     }
   }
 
@@ -1222,6 +1280,7 @@
 
   /* ---------- Initial render + tick ---------- */
   renderWeek();
+  renderDutyName();
   renderTick();
   setInterval(renderTick, 1000);
 </script>
