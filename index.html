@@ -202,6 +202,8 @@
 
     .header {
       position: relative;
+      isolation: isolate;
+      overflow: hidden;
       padding: clamp(28px, 5vw, 54px) clamp(24px, 6vw, 72px) clamp(26px, 4vw, 42px);
       border-bottom: 1px solid rgb(var(--gold-rgb) / 20%);
       background:
@@ -209,15 +211,78 @@
         linear-gradient(115deg, rgb(5 9 16 / 22%), rgb(255 255 255 / 2%));
     }
 
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgb(8 13 23 / 96%) 0%, rgb(8 13 23 / 84%) 43%, rgb(8 13 23 / 40%) 67%, rgb(8 13 23 / 8%) 100%),
+        linear-gradient(0deg, rgb(8 13 23 / 32%), transparent 52%);
+    }
+
     .header::after {
       content: '';
       position: absolute;
+      z-index: 3;
       right: clamp(36px, 9vw, 118px);
       bottom: -1px;
       width: min(300px, 32vw);
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--state), transparent);
       box-shadow: 0 0 14px rgb(var(--state-rgb) / 55%);
+    }
+
+    .header-top,
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-sigil-stage {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      overflow: hidden;
+      contain: paint;
+      pointer-events: none;
+    }
+
+    .hero-sigil { display: none; }
+
+    @supports (mix-blend-mode: screen) {
+      .hero-sigil-stage { mix-blend-mode: screen; }
+
+      .hero-sigil {
+        --sigil-x: 0%;
+        --sigil-y: 0%;
+        display: block;
+        position: absolute;
+        top: 54%;
+        right: clamp(-74px, -4vw, -24px);
+        width: clamp(300px, 46vw, 520px);
+        aspect-ratio: 1;
+        opacity: 0;
+        background-color: var(--state);
+        background-image: url('assets/ascian-sigils-sprite.png');
+        background-repeat: no-repeat;
+        background-position: var(--sigil-x) var(--sigil-y);
+        background-size: 500% 300%;
+        background-blend-mode: multiply;
+        filter: contrast(1.8) brightness(1.05);
+        transform: translateY(-50%) scale(.96) rotate(-1deg);
+        will-change: opacity, transform;
+        transition:
+          opacity 1.6s ease-in-out,
+          transform 1.8s ease-in-out,
+          background-color .5s ease;
+      }
+
+      .hero-sigil.is-visible {
+        opacity: .17;
+        transform: translateY(-50%) scale(1) rotate(0);
+      }
     }
 
     .header-top,
@@ -975,6 +1040,17 @@
       body { place-items: start center; background-attachment: scroll; }
       .card { border-radius: 12px; }
       .header { padding-inline: 22px; }
+      .header::before {
+        background:
+          linear-gradient(90deg, rgb(8 13 23 / 97%) 0%, rgb(8 13 23 / 88%) 52%, rgb(8 13 23 / 50%) 78%, rgb(8 13 23 / 18%) 100%),
+          linear-gradient(0deg, rgb(8 13 23 / 40%), transparent 58%);
+      }
+      .hero-sigil {
+        top: 57%;
+        right: clamp(-96px, -10vw, -42px);
+        width: clamp(270px, 72vw, 420px);
+      }
+      .hero-sigil.is-visible { opacity: .13; }
       .details-toggle { padding-inline: 22px; }
       .dashboard-grid { grid-template-columns: 1fr; }
       .status-panel { padding-inline: 22px; }
@@ -996,6 +1072,12 @@
       .realm-label { max-width: 190px; line-height: 1.5; }
       .icon-wrap { width: 50px; height: 50px; }
       .hero-copy { padding-top: 38px; }
+      .hero-sigil {
+        top: 60%;
+        right: -108px;
+        width: min(112vw, 390px);
+      }
+      .hero-sigil.is-visible { opacity: .1; }
       .question { font-size: clamp(2.35rem, 15vw, 3.4rem); }
       .countdown-display { gap: 5px; }
       .cd-num { min-height: 64px; border-radius: 6px; font-size: clamp(1.75rem, 11vw, 2.5rem); }
@@ -1024,6 +1106,7 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
       .uwu-container, .aether-container { display: none; }
+      .hero-sigil { transition: none !important; }
     }
   </style>
 </head>
@@ -1037,6 +1120,10 @@
   <div class="corner-tr"></div>
   <div class="corner-bl"></div>
   <header class="header">
+    <div class="hero-sigil-stage" aria-hidden="true">
+      <span class="hero-sigil is-visible" data-sigil-layer="0"></span>
+      <span class="hero-sigil" data-sigil-layer="1"></span>
+    </div>
     <div class="header-top">
       <div class="brand-lockup">
         <div class="icon-wrap" aria-hidden="true">
@@ -1819,6 +1906,59 @@
     aetherContainer.appendChild(el); setTimeout(()=>el.remove(),(duration+4)*1000);
   }
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Hero sigil cycle ---------- */
+  const sigilLayers=Array.from(document.querySelectorAll('[data-sigil-layer]'));
+  const sigilCells=[
+    ['0%','0%'],['25%','0%'],['50%','0%'],['75%','0%'],['100%','0%'],
+    ['0%','50%'],['25%','50%'],['50%','50%'],['75%','50%'],
+    ['0%','100%'],['25%','100%'],['50%','100%'],['75%','100%']
+  ];
+  const sigilMotionQuery=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let sigilIndex=0, visibleSigilLayer=0, sigilTimer=0;
+
+  function setSigilCell(layer,index){
+    const [x,y]=sigilCells[index];
+    layer.style.setProperty('--sigil-x',x);
+    layer.style.setProperty('--sigil-y',y);
+  }
+
+  function stopSigilCycle(){
+    if(sigilTimer) window.clearTimeout(sigilTimer);
+    sigilTimer=0;
+  }
+
+  function queueNextSigil(){
+    stopSigilCycle();
+    if(sigilMotionQuery.matches || document.hidden || sigilLayers.length!==2) return;
+    const delay=5000+Math.floor(Math.random()*3001);
+    sigilTimer=window.setTimeout(showNextSigil,delay);
+  }
+
+  function showNextSigil(){
+    sigilIndex=(sigilIndex+1)%sigilCells.length;
+    const outgoing=sigilLayers[visibleSigilLayer];
+    visibleSigilLayer=visibleSigilLayer===0?1:0;
+    const incoming=sigilLayers[visibleSigilLayer];
+    setSigilCell(incoming,sigilIndex);
+    incoming.classList.add('is-visible');
+    outgoing.classList.remove('is-visible');
+    queueNextSigil();
+  }
+
+  if(sigilLayers.length===2){
+    setSigilCell(sigilLayers[0],0);
+    queueNextSigil();
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden) stopSigilCycle();
+      else queueNextSigil();
+    });
+    sigilMotionQuery.addEventListener('change',()=>{
+      if(sigilMotionQuery.matches) stopSigilCycle();
+      else queueNextSigil();
+    });
+  }
+
   if(!reduceMotion){
     setInterval(spawnUwU,2600); setTimeout(spawnUwU,900);
     setInterval(spawnAether,520);
