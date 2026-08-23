@@ -273,8 +273,7 @@
     .status-context,
     .realm-label,
     .live-dot,
-    .tz-label,
-    .footer {
+    .tz-label {
       text-transform: uppercase;
       letter-spacing: .2em;
     }
@@ -530,15 +529,26 @@
     .legend-glyph.raid { color: var(--gold); background: rgb(var(--gold-rgb) / 30%); }
 
     .footer-bar {
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 20px;
       min-height: 58px;
-      padding: 14px clamp(24px, 6vw, 72px);
+      padding: 14px clamp(24px, 6vw, 72px) 14px 88px;
       border-top: 1px solid rgb(var(--gold-rgb) / 15%);
       background: rgb(0 0 0 / 13%);
     }
 
-    .footer { border: 0; color: #7e8ca3; background: none; font-size: 9px; font-weight: 700; cursor: default; user-select: none; }
+    .corner-trigger {
+      width: 72px;
+      height: 72px;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: 8;
+      background: transparent;
+      touch-action: manipulation;
+      user-select: none;
+    }
+
     .sync-state { display: inline-flex; align-items: center; gap: 7px; color: var(--dim); font-size: 10px; }
     .sync-state::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--aether); box-shadow: 0 0 8px rgb(117 220 232 / 55%); }
     .sync-state.is-offline::before { background: var(--danger); box-shadow: 0 0 8px rgb(255 118 110 / 55%); }
@@ -678,7 +688,7 @@
       .week.open + .schedule-legend { max-height: 80px; margin-top: 20px; opacity: 1; }
       .modal-grid { grid-template-columns: 1fr; }
       .admin-pane + .admin-pane { border-top: 1px solid rgb(var(--gold-rgb) / 14%); border-left: 0; }
-      .footer-bar { padding-inline: 22px; }
+      .footer-bar { padding-right: 22px; padding-left: 82px; }
     }
 
     @media (max-width: 500px) {
@@ -697,7 +707,7 @@
       .signal-mark { font-size: 8px; }
       .day-row { grid-template-columns: 1fr; gap: 4px; }
       .day-time { padding-left: 0; }
-      .footer-bar { align-items: flex-start; flex-direction: column; gap: 10px; }
+      .footer-bar { align-items: flex-end; flex-direction: column; gap: 10px; }
       .vac-trigger { margin-left: 0; }
       .modal-header, .admin-pane { padding-inline: 20px; }
       .modal-header { align-items: flex-start; gap: 10px; }
@@ -800,7 +810,7 @@
   </div>
 
   <footer class="footer-bar">
-    <button class="footer" id="footer-text" type="button">Raid Schedule &amp; Status</button>
+    <div class="corner-trigger" id="footer-text" aria-hidden="true"></div>
     <div class="sync-state" id="sync-state" role="status">Connecting to aether…</div>
     <button class="vac-trigger" id="vac-trigger" type="button" style="display:none;" onclick="openAdminModal()">Open Admin Panel</button>
   </footer>
@@ -1171,7 +1181,7 @@
     }
   });
 
-  /* ---------- Secret footer trigger (15 clicks) ---------- */
+  /* ---------- Secret lower-left corner trigger (15 clicks) ---------- */
   let footerClicks=0, footerTimer=null;
   document.getElementById('footer-text').addEventListener('click',()=>{
     footerClicks++;
